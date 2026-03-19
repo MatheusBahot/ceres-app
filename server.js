@@ -35,4 +35,7 @@ app.get('/recover', (req, res) =>
 app.listen(PORT, () => {
   console.log('\n Ceres rodando em http://localhost:' + PORT);
   console.log('    Admin: admin@ceresrefrigeracao.com.br / Ceres@2024!\n');
-});
+
+// Health check para UptimeRobot manter o serviço acordado
+app.get('/health', (req, res) => res.json({ status: 'ok', ts: Date.now() }));
+
