@@ -3,6 +3,7 @@ services:
     name: ceres-app
     env: node
     plan: free
+    region: oregon
     buildCommand: npm install
     startCommand: node server.js
     envVars:
@@ -10,3 +11,5 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
+      - key: NODE_VERSION
+        value: 20.18.0
