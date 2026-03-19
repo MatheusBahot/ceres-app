@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Início</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+  <style>
+    .hero {
+      padding: 72px 0 56px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 56px;
+    }
+    .hero-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-accent);
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.07;
+      color: var(--c-text);
+      margin-bottom: 20px;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--c-accent);
+    }
+    .hero-body {
+      font-size: 1.05rem;
+      color: var(--c-text-2);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hero-meta-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+    }
+    .hero-meta-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--c-text-2);
+    }
+ 
+    .section { margin-bottom: 56px; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+      margin-bottom: 20px;
+    }
+ 
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--c-border);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      overflow: hidden;
+    }
+    .feature-item {
+      background: var(--c-bg-card);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .feature-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: rgba(10,132,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .feature-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--c-text);
+      letter-spacing: -0.01em;
+    }
+    .feature-desc {
+      font-size: 0.83rem;
+      color: var(--c-text-2);
+      line-height: 1.6;
+    }
+ 
+    .tech-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .tech-tag {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tech-tag-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--c-text);
+    }
+    .tech-tag-desc {
+      font-size: 0.76rem;
+      color: var(--c-text-3);
+    }
+ 
+    .quicknav {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .quicknav-item {
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      padding: 20px;
+      background: var(--c-bg-card);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      transition: box-shadow 0.15s, transform 0.15s;
+      color: var(--c-text);
+    }
+    .quicknav-item:hover {
+      box-shadow: var(--c-shadow-md);
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: var(--c-text);
+    }
+    .quicknav-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .quicknav-label { font-size: 0.88rem; font-weight: 700; }
+    .quicknav-sub   { font-size: 0.76rem; color: var(--c-text-2); margin-top: 1px; }
+ 
+    .greeting-bar {
+      font-size: 0.9rem;
+      color: var(--c-text-2);
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    .greeting-bar strong { color: var(--c-text); }
+  </style>
+</head>
+<body>
+ 
+<nav class="navbar">
+  <a class="navbar-brand" href="/home">
+    <img src="/assets/logo.svg" alt="Ceres" width="28" height="28">Ceres
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="/home">Início</a></li>
+    <li><a href="/search">Pesquisa</a></li>
+    <li><a href="/wallet">Carteira</a></li>
+    <li><a href="/reports">Reportar</a></li>
+    <li data-admin-only><a href="/admin">Admin</a></li>
+  </ul>
+  <div class="navbar-end">
+    <div class="dropdown">
+      <div class="avatar" id="user-dropdown-btn"></div>
+      <div class="dropdown-menu" id="user-dropdown" style="display:none;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--c-border);">
+          <div class="fw-600" style="font-size:0.9rem;" id="dd-name"></div>
+          <div class="text-muted text-xs" id="dd-email"></div>
+          <div class="text-xs mt-1" id="dd-role"></div>
+        </div>
+        <a href="/wallet">Minha Carteira</a>
+        <div class="sep"></div>
+        <button data-logout>Sair</button>
+      </div>
+    </div>
+  </div>
+</nav>
+ 
+<div class="page-wrapper">
+  <div class="container">
+ 
+    <!-- HERO -->
+    <div class="hero">
+      <div class="greeting-bar" id="greeting"></div>
+      <div class="hero-eyebrow">Ceres · Prospecção Comercial</div>
+      <h1 class="hero-title">Inteligência de mercado<br>para <em>refrigeração</em>.</h1>
+      <p class="hero-body">
+        Plataforma centralizada de prospecção B2B para a Ceres Refrigeração.
+        Empresas baianas dos segmentos com maior dependência de frio —
+        organizadas, validadas e distribuídas por território entre a equipe comercial.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Cobertura</span>
+          <span class="hero-meta-value">Estado da Bahia</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Fonte</span>
+          <span class="hero-meta-value">SEBRAE · CNPJ</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Segmentos</span>
+          <span class="hero-meta-value">12 grupos de interesse</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-label">Acesso</span>
+          <span class="hero-meta-value">JWT · 8h de sessão</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- FUNCIONALIDADES -->
+    <div class="section">
+      <div class="section-label">Como funciona</div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Pesquisa Estruturada</div>
+          <div class="feature-desc">Navegação por município → segmento → empresa. Filtro por nome, razão social ou CNPJ com retorno instantâneo.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">💼</div>
+          <div class="feature-title">Carteira por Vendedor</div>
+          <div class="feature-desc">Cada empresa adicionada à carteira fica invisível para os demais vendedores. Elimina sobreposição de abordagem.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Pipeline de Prospecção</div>
+          <div class="feature-desc">Quatro estágios: Prospectar · Contatado · Cliente · Perdido. Notas livres por empresa para registro de contexto.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Controle de Acesso</div>
+          <div class="feature-desc">Dois perfis: vendedor (visualização e prospecção) e administrador (edição, gestão de equipe e visão global).</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📋</div>
+          <div class="feature-title">Reportação</div>
+          <div class="feature-desc">Canal direto para correção de dados, sugestões de inclusão e atualizações cadastrais. Gerenciado pelo admin.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🗄️</div>
+          <div class="feature-title">Base Atualizada</div>
+          <div class="feature-desc">Dados extraídos, validados e classificados por CNAE. Telefones confirmados. Base expansível conforme a operação cresce.</div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- STACK TÉCNICA -->
+    <div class="section">
+      <div class="section-label">Stack técnica</div>
+      <div class="tech-row">
+        <div class="tech-tag">
+          <span class="tech-tag-name">Node.js 20</span>
+          <span class="tech-tag-desc">Runtime · backend</span>
+        </div>
+        <div class="tech-tag">
+          <span class="tech-tag-name">Express 4</span>
+          <span class="tech-tag-desc">API REST</span>
+        </div>
+        <div class="tech-tag">
+          <span class="tech-tag-name">SQLite 3</span>
+          <span class="tech-tag-desc">Banco de dados</span>
+        </div>
+        <div class="tech-tag">
+          <span class="tech-tag-name">JWT HS256</span>
+          <span class="tech-tag-desc">Autenticação · 8h</span>
+        </div>
+        <div class="tech-tag">
+          <span class="tech-tag-name">bcrypt · salt 10</span>
+          <span class="tech-tag-desc">Hash de senhas</span>
+        </div>
+        <div class="tech-tag">
+          <span class="tech-tag-name">HTML · CSS · JS</span>
+          <span class="tech-tag-desc">Frontend puro</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- ACESSO RÁPIDO -->
+    <div class="section">
+      <div class="section-label">Acesso rápido</div>
+      <div class="quicknav">
+        <a href="/search" class="quicknav-item">
+          <div class="quicknav-icon" style="background:rgba(10,132,255,0.08);">🔍</div>
+          <div>
+            <div class="quicknav-label">Pesquisar</div>
+            <div class="quicknav-sub">Buscar empresas por cidade ou grupo</div>
+          </div>
+        </a>
+        <a href="/wallet" class="quicknav-item">
+          <div class="quicknav-icon" style="background:rgba(48,209,88,0.08);">💼</div>
+          <div>
+            <div class="quicknav-label">Minha Carteira</div>
+            <div class="quicknav-sub">Pipeline de prospecção ativa</div>
+          </div>
+        </a>
+        <a href="/reports" class="quicknav-item">
+          <div class="quicknav-icon" style="background:rgba(255,159,10,0.08);">📋</div>
+          <div>
+            <div class="quicknav-label">Reportar</div>
+            <div class="quicknav-sub">Correções e sugestões de dados</div>
+          </div>
+        </a>
+        <a href="/admin" class="quicknav-item" data-admin-only>
+          <div class="quicknav-icon" style="background:rgba(120,80,230,0.08);">⚙️</div>
+          <div>
+            <div class="quicknav-label">Administração</div>
+            <div class="quicknav-sub">Vendedores, carteiras e reports</div>
+          </div>
+        </a>
+      </div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<div id="toast-container"></div>
+<script src="/js/ceres.js"></script>
+<script>
+  requireAuth();
+  const user = Auth.getUser();
+  const hora = new Date().getHours();
+  const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+  const nome = user?.name?.split(' ')[0] || '';
+  document.getElementById('greeting').innerHTML =
+    `${saudacao}, <strong>${escHtml(nome)}</strong>.`;
+ 
+  // dropdown info
+  const ddName = document.getElementById('dd-name');
+  const ddEmail = document.getElementById('dd-email');
+  const ddRole = document.getElementById('dd-role');
+  if (ddName)  ddName.textContent  = user?.name  || '';
+  if (ddEmail) ddEmail.textContent = user?.email || '';
+  if (ddRole)  ddRole.textContent  = user?.role === 'admin' ? '🔑 Administrador' : '👤 Vendedor';
+</script>
+</body>
+</html>

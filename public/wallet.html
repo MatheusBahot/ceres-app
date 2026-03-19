@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Carteira</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+  <style>
+    .page-head { padding: 40px 0 32px; border-bottom: 1px solid var(--c-border); margin-bottom: 32px; }
+    .page-head h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; }
+    .page-head p  { font-size: 0.9rem; color: var(--c-text-2); }
+ 
+    .pipeline-bar {
+      display: flex;
+      gap: 1px;
+      margin-bottom: 32px;
+      background: var(--c-border);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      overflow: hidden;
+    }
+    .pipeline-seg {
+      flex: 1;
+      padding: 18px 16px;
+      background: var(--c-bg-card);
+      cursor: pointer;
+      transition: background 0.13s;
+      text-align: center;
+    }
+    .pipeline-seg:hover { background: rgba(10,132,255,0.04); }
+    .pipeline-seg.active { background: rgba(10,132,255,0.06); }
+    .pipeline-seg-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--c-text);
+      line-height: 1;
+    }
+    .pipeline-seg-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+ 
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-row .search-bar { flex: 1; min-width: 200px; }
+ 
+    .wallet-list { display: flex; flex-direction: column; gap: 8px; }
+    .wallet-card {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      padding: 18px 20px;
+      transition: box-shadow 0.15s;
+    }
+    .wallet-card:hover { box-shadow: var(--c-shadow-sm); }
+    .wallet-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .wallet-card-info { flex: 1; min-width: 0; }
+    .wallet-card-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--c-text);
+      margin-bottom: 3px;
+    }
+    .wallet-card-meta {
+      font-size: 0.78rem;
+      color: var(--c-text-2);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .wallet-card-bottom {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .notes-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 8px 12px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius);
+      font-size: 0.82rem;
+      background: var(--c-bg);
+      color: var(--c-text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .notes-input:focus { border-color: var(--c-accent); }
+    .status-select {
+      padding: 7px 12px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius);
+      font-size: 0.82rem;
+      background: var(--c-bg);
+      color: var(--c-text);
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+      font-weight: 600;
+    }
+ 
+    .empty-wallet {
+      text-align: center;
+      padding: 72px 24px;
+      color: var(--c-text-3);
+    }
+    .empty-wallet a { color: var(--c-accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+ 
+<nav class="navbar">
+  <a class="navbar-brand" href="/home">
+    <img src="/assets/logo.svg" alt="Ceres" width="28" height="28">Ceres
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="/home">Início</a></li>
+    <li><a href="/search">Pesquisa</a></li>
+    <li><a href="/wallet">Carteira</a></li>
+    <li><a href="/reports">Reportar</a></li>
+    <li data-admin-only><a href="/admin">Admin</a></li>
+  </ul>
+  <div class="navbar-end">
+    <div class="dropdown">
+      <div class="avatar" id="user-dropdown-btn"></div>
+      <div class="dropdown-menu" id="user-dropdown" style="display:none;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--c-border);">
+          <div class="fw-600" style="font-size:0.9rem;" id="dd-name"></div>
+          <div class="text-muted text-xs" id="dd-email"></div>
+        </div>
+        <a href="/search">Pesquisar</a>
+        <div class="sep"></div>
+        <button data-logout>Sair</button>
+      </div>
+    </div>
+  </div>
+</nav>
+ 
+<div class="page-wrapper">
+  <div class="container">
+ 
+    <div class="page-head">
+      <h1>Minha Carteira</h1>
+      <p>Empresas em prospecção. Atualize o status e registre notas a cada interação.</p>
+    </div>
+ 
+    <!-- PIPELINE -->
+    <div class="pipeline-bar" id="pipeline-bar">
+      <div class="pipeline-seg" data-status="" onclick="filterStatus('')">
+        <div class="pipeline-seg-num" id="ps-total">—</div>
+        <div class="pipeline-seg-label" style="color:var(--c-text-2);">Total</div>
+      </div>
+      <div class="pipeline-seg" data-status="prospectar" onclick="filterStatus('prospectar')">
+        <div class="pipeline-seg-num" id="ps-prospectar">—</div>
+        <div class="pipeline-seg-label" style="color:#0A84FF;">Prospectar</div>
+      </div>
+      <div class="pipeline-seg" data-status="contatado" onclick="filterStatus('contatado')">
+        <div class="pipeline-seg-num" id="ps-contatado">—</div>
+        <div class="pipeline-seg-label" style="color:#FF9F0A;">Contatado</div>
+      </div>
+      <div class="pipeline-seg" data-status="cliente" onclick="filterStatus('cliente')">
+        <div class="pipeline-seg-num" id="ps-cliente">—</div>
+        <div class="pipeline-seg-label" style="color:#30D158;">Cliente</div>
+      </div>
+      <div class="pipeline-seg" data-status="perdido" onclick="filterStatus('perdido')">
+        <div class="pipeline-seg-num" id="ps-perdido">—</div>
+        <div class="pipeline-seg-label" style="color:#FF453A;">Perdido</div>
+      </div>
+    </div>
+ 
+    <!-- FILTRO -->
+    <div class="filter-row">
+      <div class="search-bar">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color:var(--c-text-3)">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.868-3.833zm-5.242 1.406a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        </svg>
+        <input type="text" id="wallet-q" placeholder="Filtrar carteira…" autocomplete="off">
+      </div>
+    </div>
+ 
+    <!-- LISTA -->
+    <div class="wallet-list" id="wallet-list">
+      <div style="padding:32px;text-align:center;">
+        <div class="spinner spinner-dark" style="margin:0 auto;"></div>
+      </div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<div id="toast-container"></div>
+<script src="/js/ceres.js"></script>
+<script>
+  requireAuth();
+  const user = Auth.getUser();
+  const ddName  = document.getElementById('dd-name');
+  const ddEmail = document.getElementById('dd-email');
+  if (ddName)  ddName.textContent  = user?.name  || '';
+  if (ddEmail) ddEmail.textContent = user?.email || '';
+ 
+  let walletData   = [];
+  let activeStatus = '';
+  let searchQ      = '';
+ 
+  async function loadWallet() {
+    try {
+      const data = await api('/wallet/');
+      walletData = data.wallet;
+ 
+      document.getElementById('ps-total').textContent      = data.summary.total;
+      document.getElementById('ps-prospectar').textContent = data.summary.prospectar;
+      document.getElementById('ps-contatado').textContent  = data.summary.contatado;
+      document.getElementById('ps-cliente').textContent    = data.summary.cliente;
+      document.getElementById('ps-perdido').textContent    = data.summary.perdido;
+ 
+      renderWallet();
+    } catch(e) { toast('Erro ao carregar carteira.', 'error'); }
+  }
+ 
+  function filterStatus(status) {
+    activeStatus = status;
+    document.querySelectorAll('.pipeline-seg').forEach(el => {
+      el.classList.toggle('active', el.dataset.status === status);
+    });
+    renderWallet();
+  }
+ 
+  document.getElementById('wallet-q').addEventListener('input', function() {
+    searchQ = this.value.toLowerCase().trim();
+    renderWallet();
+  });
+ 
+  function renderWallet() {
+    const list = document.getElementById('wallet-list');
+    let items = walletData;
+    if (activeStatus) items = items.filter(i => i.status === activeStatus);
+    if (searchQ) items = items.filter(i =>
+      (i.nome_fantasia||'').toLowerCase().includes(searchQ) ||
+      (i.razao_social||'').toLowerCase().includes(searchQ) ||
+      (i.municipio||'').toLowerCase().includes(searchQ)
+    );
+ 
+    if (!items.length) {
+      list.innerHTML = `<div class="empty-wallet">
+        <p style="font-size:1rem;font-weight:700;margin-bottom:8px;">Carteira vazia</p>
+        <p>Adicione empresas pela <a href="/search">página de pesquisa</a>.</p>
+      </div>`;
+      return;
+    }
+ 
+    list.innerHTML = items.map(item => {
+      const tels = [item.tel1, item.tel2, item.tel3].filter(Boolean);
+      return `<div class="wallet-card" id="wc-${item.company_id}">
+        <div class="wallet-card-top">
+          <div class="wallet-card-info">
+            <div class="wallet-card-name">${escHtml(item.nome_fantasia || item.razao_social)}</div>
+            <div class="wallet-card-meta">
+              <span>📍 ${escHtml(item.municipio)}</span>
+              ${tels[0] ? `<span>📞 <a href="tel:${tels[0]}" style="color:var(--c-accent);font-weight:600;">${escHtml(tels[0])}</a></span>` : ''}
+              <span>${escHtml(item.segmento || item.grupo)}</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+            ${statusBadge(item.status)}
+            <button class="btn btn-sm" style="background:rgba(255,69,58,0.08);color:var(--c-danger);padding:5px 10px;"
+              onclick="removeFromWallet(${item.company_id})">✕</button>
+          </div>
+        </div>
+        <div class="wallet-card-bottom">
+          <select class="status-select" id="sel-${item.company_id}" onchange="updateStatus(${item.company_id}, this.value)">
+            <option value="prospectar" ${item.status==='prospectar'?'selected':''}>Prospectar</option>
+            <option value="contatado"  ${item.status==='contatado' ?'selected':''}>Contatado</option>
+            <option value="cliente"    ${item.status==='cliente'   ?'selected':''}>Cliente</option>
+            <option value="perdido"    ${item.status==='perdido'   ?'selected':''}>Perdido</option>
+          </select>
+          <input class="notes-input" id="note-${item.company_id}"
+            value="${escHtml(item.notes || '')}"
+            placeholder="Anotação sobre o contato…"
+            onblur="saveNote(${item.company_id}, this.value)">
+        </div>
+      </div>`;
+    }).join('');
+  }
+ 
+  async function updateStatus(companyId, status) {
+    try {
+      await api('/wallet/update/' + companyId, {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      const item = walletData.find(i => i.company_id === companyId);
+      if (item) item.status = status;
+      toast('Status atualizado.', 'success');
+      // Atualiza contadores
+      loadWallet();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+ 
+  async function saveNote(companyId, notes) {
+    try {
+      await api('/wallet/update/' + companyId, {
+        method: 'PATCH',
+        body: JSON.stringify({ notes })
+      });
+      const item = walletData.find(i => i.company_id === companyId);
+      if (item) item.notes = notes;
+    } catch(e) { /* silencioso */ }
+  }
+ 
+  async function removeFromWallet(companyId) {
+    if (!confirm('Remover empresa da carteira?')) return;
+    try {
+      await api('/wallet/remove/' + companyId, { method: 'DELETE' });
+      walletData = walletData.filter(i => i.company_id !== companyId);
+      renderWallet();
+      loadWallet();
+      toast('Removida da carteira.', 'success');
+    } catch(e) { toast(e.message, 'error'); }
+  }
+ 
+  loadWallet();
+</script>
+</body>
+</html>

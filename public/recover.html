@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Recuperar Senha</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+</head>
+<body>
+<div class="auth-bg">
+  <div class="auth-card" style="max-width:400px;">
+    <div class="auth-logo" style="margin-bottom:28px;">
+      <img src="/assets/logo.svg" alt="Ceres" width="48" height="48">
+      <h1 style="font-size:1.6rem;">Recuperar Senha</h1>
+      <p id="subtitle">Informe seu e-mail para receber o token de redefinição.</p>
+    </div>
+ 
+    <!-- STEP 1: Solicitar token -->
+    <div id="step-request">
+      <form id="request-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="rec-email">E-mail</label>
+          <input class="form-input" type="email" id="rec-email" placeholder="seu@email.com.br" required>
+        </div>
+        <div id="req-msg" style="margin-top:12px;min-height:20px;"></div>
+        <button class="btn btn-primary btn-full" type="submit" id="req-btn" style="margin-top:16px;">
+          Enviar
+        </button>
+      </form>
+      <div id="dev-token-box" class="hidden" style="margin-top:20px;">
+        <div class="alert alert-info" style="flex-direction:column;gap:8px;">
+          <span style="font-weight:700;color:#fff;">🔑 Token (modo dev)</span>
+          <code id="dev-token-val" style="word-break:break-all;font-size:0.8rem;"></code>
+          <button class="btn btn-ghost btn-sm" id="copy-token" style="margin-top:4px;color:#fff;">
+            Copiar Token
+          </button>
+        </div>
+        <button class="btn btn-secondary btn-full" style="margin-top:12px;" id="goto-step2">
+          Usar este token →
+        </button>
+      </div>
+    </div>
+ 
+    <!-- STEP 2: Redefinir senha com token -->
+    <div id="step-reset" class="hidden">
+      <form id="reset-form" novalidate>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="reset-token">Token de Redefinição</label>
+            <input class="form-input" type="text" id="reset-token"
+                   placeholder="Cole o token aqui" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-pass">Nova Senha</label>
+            <input class="form-input" type="password" id="new-pass"
+                   placeholder="Mínimo 8 caracteres" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirm-pass">Confirmar Nova Senha</label>
+            <input class="form-input" type="password" id="confirm-pass"
+                   placeholder="Repita a nova senha" required>
+          </div>
+        </div>
+        <div id="reset-msg" style="margin-top:12px;min-height:20px;"></div>
+        <button class="btn btn-primary btn-full" type="submit" id="reset-btn" style="margin-top:16px;">
+          Redefinir Senha
+        </button>
+      </form>
+    </div>
+ 
+    <div class="auth-divider"></div>
+    <div class="auth-footer">
+      <a href="/">← Voltar ao login</a>
+    </div>
+  </div>
+</div>
+ 
+<script>
+  let savedToken = '';
+ 
+  // STEP 1
+  document.getElementById('request-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('rec-email').value.trim();
+    const msgEl = document.getElementById('req-msg');
+    const btn   = document.getElementById('req-btn');
+ 
+    msgEl.innerHTML = '';
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Enviando...';
+ 
+    try {
+      const res  = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+ 
+      msgEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+ 
+      if (data.dev_token) {
+        savedToken = data.dev_token;
+        document.getElementById('dev-token-val').textContent = data.dev_token;
+        document.getElementById('dev-token-box').classList.remove('hidden');
+      } else {
+        setTimeout(() => {
+          document.getElementById('step-request').classList.add('hidden');
+          document.getElementById('step-reset').classList.remove('hidden');
+          document.getElementById('subtitle').textContent = 'Cole o token recebido e crie sua nova senha.';
+        }, 1800);
+      }
+    } catch(err) {
+      msgEl.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+    }
+    btn.disabled = false;
+    btn.innerHTML = 'Enviar';
+  });
+ 
+  document.getElementById('goto-step2')?.addEventListener('click', () => {
+    document.getElementById('step-request').classList.add('hidden');
+    document.getElementById('step-reset').classList.remove('hidden');
+    document.getElementById('reset-token').value = savedToken;
+    document.getElementById('subtitle').textContent = 'Cole o token e crie sua nova senha.';
+  });
+ 
+  document.getElementById('copy-token')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(savedToken).catch(() => {});
+    document.getElementById('copy-token').textContent = '✓ Copiado!';
+  });
+ 
+  // STEP 2
+  document.getElementById('reset-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const token      = document.getElementById('reset-token').value.trim();
+    const newPass    = document.getElementById('new-pass').value;
+    const confirmP   = document.getElementById('confirm-pass').value;
+    const msgEl      = document.getElementById('reset-msg');
+    const btn        = document.getElementById('reset-btn');
+ 
+    msgEl.innerHTML = '';
+    if (newPass !== confirmP) {
+      msgEl.innerHTML = '<div class="alert alert-error">As senhas não coincidem.</div>';
+      return;
+    }
+    if (newPass.length < 8) {
+      msgEl.innerHTML = '<div class="alert alert-error">Senha mínima de 8 caracteres.</div>';
+      return;
+    }
+ 
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Salvando...';
+ 
+    try {
+      const res  = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, new_password: newPass })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+ 
+      msgEl.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+      setTimeout(() => window.location.href = '/', 2000);
+    } catch(err) {
+      msgEl.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      btn.disabled = false;
+      btn.innerHTML = 'Redefinir Senha';
+    }
+  });
+</script>
+</body>
+</html>

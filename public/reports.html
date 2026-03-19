@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Reportar</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+  <style>
+    .page-head { padding: 40px 0 32px; border-bottom: 1px solid var(--c-border); margin-bottom: 40px; }
+    .page-head h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; }
+    .page-head p  { font-size: 0.9rem; color: var(--c-text-2); }
+ 
+    .report-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    @media (max-width: 720px) { .report-layout { grid-template-columns: 1fr; } }
+ 
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .type-btn {
+      padding: 12px 8px;
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--c-radius);
+      background: var(--c-bg-card);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.13s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .type-btn:hover { border-color: var(--c-accent); }
+    .type-btn.selected {
+      border-color: var(--c-accent);
+      background: rgba(10,132,255,0.06);
+    }
+    .type-btn-icon { font-size: 1.3rem; }
+    .type-btn-label { font-size: 0.75rem; font-weight: 700; color: var(--c-text); }
+ 
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius);
+      padding: 14px 16px;
+    }
+    .history-title { font-size: 0.88rem; font-weight: 700; color: var(--c-text); margin-bottom: 4px; }
+    .history-meta { font-size: 0.75rem; color: var(--c-text-2); display: flex; gap: 10px; flex-wrap: wrap; }
+    .history-desc { font-size: 0.8rem; color: var(--c-text-2); margin-top: 6px; line-height: 1.5; }
+ 
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+ 
+<nav class="navbar">
+  <a class="navbar-brand" href="/home">
+    <img src="/assets/logo.svg" alt="Ceres" width="28" height="28">Ceres
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="/home">Início</a></li>
+    <li><a href="/search">Pesquisa</a></li>
+    <li><a href="/wallet">Carteira</a></li>
+    <li><a href="/reports">Reportar</a></li>
+    <li data-admin-only><a href="/admin">Admin</a></li>
+  </ul>
+  <div class="navbar-end">
+    <div class="dropdown">
+      <div class="avatar" id="user-dropdown-btn"></div>
+      <div class="dropdown-menu" id="user-dropdown" style="display:none;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--c-border);">
+          <div class="fw-600" style="font-size:0.9rem;" id="dd-name"></div>
+          <div class="text-muted text-xs" id="dd-email"></div>
+        </div>
+        <a href="/wallet">Minha Carteira</a>
+        <div class="sep"></div>
+        <button data-logout>Sair</button>
+      </div>
+    </div>
+  </div>
+</nav>
+ 
+<div class="page-wrapper">
+  <div class="container">
+ 
+    <div class="page-head">
+      <h1>Reportar</h1>
+      <p>Corrija dados incorretos, sugira inclusões ou solicite atualizações cadastrais.</p>
+    </div>
+ 
+    <div class="report-layout">
+ 
+      <!-- FORMULÁRIO -->
+      <div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.01em;">Novo Report</h3>
+ 
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Tipo</label>
+          <div class="type-grid">
+            <button class="type-btn selected" data-type="erro" onclick="selectType('erro',this)">
+              <span class="type-btn-icon">⚠️</span>
+              <span class="type-btn-label">Erro</span>
+            </button>
+            <button class="type-btn" data-type="sugestao" onclick="selectType('sugestao',this)">
+              <span class="type-btn-icon">💡</span>
+              <span class="type-btn-label">Sugestão</span>
+            </button>
+            <button class="type-btn" data-type="atualizacao" onclick="selectType('atualizacao',this)">
+              <span class="type-btn-icon">🔄</span>
+              <span class="type-btn-label">Atualização</span>
+            </button>
+          </div>
+        </div>
+ 
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label" for="report-title">Título</label>
+          <input class="form-input" type="text" id="report-title"
+            placeholder="Ex: Telefone incorreto — Padaria São João">
+        </div>
+ 
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label" for="report-cnpj">CNPJ da empresa (opcional)</label>
+          <input class="form-input" type="text" id="report-cnpj"
+            placeholder="00.000.000/0000-00" maxlength="18">
+        </div>
+ 
+        <div class="form-group" style="margin-bottom:24px;">
+          <label class="form-label" for="report-desc">Descrição</label>
+          <textarea class="form-textarea" id="report-desc" rows="4"
+            placeholder="Descreva o problema, sugestão ou dado a atualizar com o máximo de detalhes possível."></textarea>
+        </div>
+ 
+        <div id="report-msg" style="min-height:20px;margin-bottom:12px;"></div>
+ 
+        <button class="btn btn-primary btn-full" id="report-btn" onclick="submitReport()">
+          Enviar Report
+        </button>
+      </div>
+ 
+      <!-- HISTÓRICO -->
+      <div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.01em;">Meus Reports</h3>
+        <div class="history-list" id="history-list">
+          <div style="padding:24px;text-align:center;">
+            <div class="spinner spinner-dark" style="margin:0 auto;"></div>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+</div>
+ 
+<div id="toast-container"></div>
+<script src="/js/ceres.js"></script>
+<script>
+  requireAuth();
+  const user = Auth.getUser();
+  const ddName  = document.getElementById('dd-name');
+  const ddEmail = document.getElementById('dd-email');
+  if (ddName)  ddName.textContent  = user?.name  || '';
+  if (ddEmail) ddEmail.textContent = user?.email || '';
+ 
+  let selectedType = 'erro';
+ 
+  function selectType(type, btn) {
+    selectedType = type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+ 
+  async function submitReport() {
+    const title       = document.getElementById('report-title').value.trim();
+    const description = document.getElementById('report-desc').value.trim();
+    const cnpj        = document.getElementById('report-cnpj').value.trim().replace(/\D/g,'');
+    const msgEl       = document.getElementById('report-msg');
+    const btn         = document.getElementById('report-btn');
+ 
+    if (!title || !description) {
+      msgEl.innerHTML = '<div class="alert alert-error">Preencha título e descrição.</div>';
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Enviando…';
+    msgEl.innerHTML = '';
+ 
+    try {
+      // Buscar company_id se CNPJ fornecido
+      let company_id = null;
+      if (cnpj) {
+        try {
+          const companies = await api('/companies/list?q=' + cnpj);
+          if (companies.length) company_id = companies[0].id;
+        } catch(_) {}
+      }
+ 
+      await api('/reports/', {
+        method: 'POST',
+        body: JSON.stringify({ type: selectedType, title, description, company_id })
+      });
+ 
+      msgEl.innerHTML = '<div class="alert alert-success">Report enviado com sucesso.</div>';
+      document.getElementById('report-title').value = '';
+      document.getElementById('report-desc').value  = '';
+      document.getElementById('report-cnpj').value  = '';
+      loadHistory();
+    } catch(e) {
+      msgEl.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    }
+    btn.disabled = false;
+    btn.innerHTML = 'Enviar Report';
+  }
+ 
+  async function loadHistory() {
+    const list = document.getElementById('history-list');
+    try {
+      const reports = await api('/reports/my');
+      if (!reports.length) {
+        list.innerHTML = '<p style="color:var(--c-text-3);font-size:0.85rem;">Nenhum report enviado ainda.</p>';
+        return;
+      }
+      const statusMap = {
+        aberto:     ['#FF9F0A','Aberto'],
+        em_analise: ['#0A84FF','Em análise'],
+        resolvido:  ['#30D158','Resolvido'],
+      };
+      const typeMap = { erro:'⚠️', sugestao:'💡', atualizacao:'🔄' };
+      list.innerHTML = reports.map(r => {
+        const [sc, sl] = statusMap[r.status] || ['#999','—'];
+        const date = new Date(r.created_at).toLocaleDateString('pt-BR');
+        return `<div class="history-item">
+          <div class="history-title">${typeMap[r.type]||''} ${escHtml(r.title)}</div>
+          <div class="history-meta">
+            <span><span class="status-dot" style="background:${sc};"></span>${sl}</span>
+            <span>${date}</span>
+            ${r.company_name ? `<span>📌 ${escHtml(r.company_name)}</span>` : ''}
+          </div>
+          <div class="history-desc">${escHtml(r.description)}</div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      list.innerHTML = '<p style="color:var(--c-danger);font-size:0.85rem;">Erro ao carregar histórico.</p>';
+    }
+  }
+ 
+  loadHistory();
+</script>
+</body>
+</html>

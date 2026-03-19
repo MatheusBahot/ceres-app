@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Pesquisa</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+  <style>
+    .search-header {
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 32px;
+    }
+    .search-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+    .search-header p { font-size: 0.9rem; color: var(--c-text-2); }
+ 
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--c-text-3);
+      margin-bottom: 24px;
+    }
+    .breadcrumb .bc-item { cursor: pointer; transition: color 0.15s; }
+    .breadcrumb .bc-item:hover { color: var(--c-accent); }
+    .breadcrumb .bc-item.active { color: var(--c-text); font-weight: 600; }
+    .breadcrumb .bc-sep { color: var(--c-text-3); }
+ 
+    .panel { display: none; }
+    .panel.active { display: block; }
+ 
+    /* Cidades */
+    .city-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+    }
+    .city-btn {
+      padding: 11px 14px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius);
+      background: var(--c-bg-card);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--c-text);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.13s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .city-btn:hover {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+      background: rgba(10,132,255,0.04);
+    }
+    .city-count {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--c-text-3);
+      background: var(--c-bg);
+      padding: 2px 7px;
+      border-radius: 100px;
+    }
+ 
+    /* Grupos */
+    .group-list { display: flex; flex-direction: column; gap: 8px; }
+    .group-btn {
+      padding: 16px 18px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      background: var(--c-bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.13s;
+      text-align: left;
+    }
+    .group-btn:hover {
+      border-color: var(--c-accent);
+      box-shadow: 0 0 0 3px rgba(10,132,255,0.07);
+    }
+    .group-btn-left { display: flex; align-items: center; gap: 12px; }
+    .group-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .group-name { font-size: 0.95rem; font-weight: 600; color: var(--c-text); }
+    .group-total { font-size: 0.8rem; color: var(--c-text-2); }
+    .group-arr { color: var(--c-text-3); font-size: 0.9rem; }
+ 
+    /* Empresas */
+    .company-list { display: flex; flex-direction: column; gap: 1px; background: var(--c-border); border: 1px solid var(--c-border); border-radius: var(--c-radius-lg); overflow: hidden; }
+    .company-row {
+      background: var(--c-bg-card);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: background 0.12s;
+    }
+    .company-row:hover { background: rgba(10,132,255,0.03); }
+    .company-row-info { flex: 1; min-width: 0; }
+    .company-row-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--c-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .company-row-sub {
+      font-size: 0.76rem;
+      color: var(--c-text-2);
+      margin-top: 2px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .company-row-sub span { display: flex; align-items: center; gap: 4px; }
+    .company-row-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+ 
+    .empty-state {
+      text-align: center;
+      padding: 56px 24px;
+      color: var(--c-text-3);
+    }
+    .empty-state svg { margin: 0 auto 16px; opacity: 0.25; }
+    .empty-state p { font-size: 0.9rem; }
+ 
+    .count-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--c-text-2);
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+ 
+    .search-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .search-top .search-bar { flex: 1; min-width: 200px; }
+  </style>
+</head>
+<body>
+ 
+<nav class="navbar">
+  <a class="navbar-brand" href="/home">
+    <img src="/assets/logo.svg" alt="Ceres" width="28" height="28">Ceres
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="/home">Início</a></li>
+    <li><a href="/search">Pesquisa</a></li>
+    <li><a href="/wallet">Carteira</a></li>
+    <li><a href="/reports">Reportar</a></li>
+    <li data-admin-only><a href="/admin">Admin</a></li>
+  </ul>
+  <div class="navbar-end">
+    <div class="dropdown">
+      <div class="avatar" id="user-dropdown-btn"></div>
+      <div class="dropdown-menu" id="user-dropdown" style="display:none;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--c-border);">
+          <div class="fw-600" style="font-size:0.9rem;" id="dd-name"></div>
+          <div class="text-muted text-xs" id="dd-email"></div>
+        </div>
+        <a href="/wallet">Minha Carteira</a>
+        <div class="sep"></div>
+        <button data-logout>Sair</button>
+      </div>
+    </div>
+  </div>
+</nav>
+ 
+<div class="page-wrapper">
+  <div class="container">
+ 
+    <div class="search-header">
+      <h1>Pesquisa</h1>
+      <p>Navegue por município, depois por segmento e visualize as empresas disponíveis para prospecção.</p>
+    </div>
+ 
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="bc-item active" data-step="cities">Municípios</span>
+    </div>
+ 
+    <!-- PANEL BUSCA GLOBAL -->
+    <div style="margin-bottom:24px;">
+      <div class="search-bar" id="global-search-bar" style="max-width:480px;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="color:var(--c-text-3)">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.868-3.833zm-5.242 1.406a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        </svg>
+        <input type="text" id="global-q" placeholder="Buscar por nome, razão social ou CNPJ…" autocomplete="off">
+      </div>
+    </div>
+ 
+    <!-- PANEL: CIDADES -->
+    <div class="panel active" id="panel-cities">
+      <div class="search-top">
+        <div class="search-bar" style="max-width:320px;">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color:var(--c-text-3)">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.868-3.833zm-5.242 1.406a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+          </svg>
+          <input type="text" id="city-filter" placeholder="Filtrar município…" autocomplete="off">
+        </div>
+        <span class="count-badge" id="city-count">—</span>
+      </div>
+      <div class="city-grid" id="city-grid">
+        <div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--c-text-3)">
+          <div class="spinner spinner-dark" style="margin:0 auto;"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- PANEL: GRUPOS -->
+    <div class="panel" id="panel-groups">
+      <div class="group-list" id="group-list"></div>
+    </div>
+ 
+    <!-- PANEL: EMPRESAS -->
+    <div class="panel" id="panel-companies">
+      <div class="search-top">
+        <span class="count-badge" id="comp-count">—</span>
+      </div>
+      <div class="company-list" id="company-list"></div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<!-- MODAL EMPRESA -->
+<div id="modal-company" style="display:none;" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-name" style="font-size:1.1rem;"></h3>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+ 
+<div id="toast-container"></div>
+<script src="/js/ceres.js"></script>
+<script>
+  requireAuth();
+  const user = Auth.getUser();
+  const ddName = document.getElementById('dd-name');
+  const ddEmail = document.getElementById('dd-email');
+  if (ddName)  ddName.textContent  = user?.name  || '';
+  if (ddEmail) ddEmail.textContent = user?.email || '';
+ 
+  const GROUP_COLORS = {
+    'SUPERMERCADOS E MERCEARIAS':   '#1A4D00',
+    'PADARIAS E FOOD SERVICE':      '#7A3B00',
+    'FARMÁCIAS E DROGARIAS':        '#003580',
+    'LABORATÓRIOS E CLÍNICAS':      '#006064',
+    'HOTÉIS E POUSADAS':            '#4A2000',
+    'CONSTRUTORAS E OBRAS':         '#0277BD',
+    'ARQUITETURA E ENGENHARIA':     '#4527A0',
+    'INDÚSTRIA E ATACADO ALIMENTOS':'#F57F17',
+    'FRIGORÍFICOS E CARNES':        '#7F0000',
+    'EVENTOS E BUFFET':             '#33691E',
+    'INSTALAÇÕES REFRIGERAÇÃO/HVAC':'#8B0000',
+    'FLORICULTURAS':                '#2E7D32',
+  };
+ 
+  let allCities = [];
+  let currentCity = '';
+  let currentGroup = '';
+ 
+  // ── NAVEGAÇÃO ──────────────────────────────────────────────────────────────
+  function showPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+ 
+  function updateBreadcrumb() {
+    const bc = document.getElementById('breadcrumb');
+    let html = `<span class="bc-item" data-step="cities">Municípios</span>`;
+    if (currentCity) {
+      html += `<span class="bc-sep">›</span>
+               <span class="bc-item" data-step="groups">${escHtml(currentCity)}</span>`;
+    }
+    if (currentGroup) {
+      html += `<span class="bc-sep">›</span>
+               <span class="bc-item active">${escHtml(currentGroup)}</span>`;
+    } else if (currentCity) {
+      html = html.replace('data-step="groups"', 'data-step="groups" class="bc-item active"').replace('class="bc-item" data-step="groups"','class="bc-item active" data-step="groups"');
+    }
+    bc.innerHTML = html;
+    bc.querySelectorAll('[data-step]').forEach(el => {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => {
+        const step = el.dataset.step;
+        if (step === 'cities') { currentCity=''; currentGroup=''; showPanel('cities'); updateBreadcrumb(); }
+        if (step === 'groups' && currentCity) { currentGroup=''; loadGroups(currentCity); }
+      });
+    });
+  }
+ 
+  // ── CIDADES ─────────────────────────────────────────────────────────────────
+  async function loadCities() {
+    try {
+      allCities = await api('/companies/cities');
+      renderCities(allCities);
+      document.getElementById('city-count').textContent = allCities.length + ' municípios';
+    } catch(e) { toast('Erro ao carregar municípios.', 'error'); }
+  }
+ 
+  function renderCities(list) {
+    const grid = document.getElementById('city-grid');
+    if (!list.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--c-text-3);">Nenhum município encontrado.</div>';
+      return;
+    }
+    grid.innerHTML = list.map(city => `
+      <button class="city-btn" onclick="selectCity('${escHtml(city)}')">
+        <span>${escHtml(city)}</span>
+      </button>`).join('');
+  }
+ 
+  document.getElementById('city-filter').addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    renderCities(q ? allCities.filter(c => c.toLowerCase().includes(q)) : allCities);
+  });
+ 
+  function selectCity(city) {
+    currentCity = city;
+    currentGroup = '';
+    updateBreadcrumb();
+    loadGroups(city);
+  }
+ 
+  // ── GRUPOS ─────────────────────────────────────────────────────────────────
+  async function loadGroups(city) {
+    showPanel('groups');
+    const list = document.getElementById('group-list');
+    list.innerHTML = '<div style="padding:32px;text-align:center;"><div class="spinner spinner-dark" style="margin:0 auto;"></div></div>';
+    try {
+      const groups = await api('/companies/groups/' + encodeURIComponent(city));
+      list.innerHTML = groups.map(g => {
+        const color = GROUP_COLORS[g.grupo] || '#666';
+        return `<button class="group-btn" onclick="selectGroup('${escHtml(g.grupo)}')">
+          <div class="group-btn-left">
+            <div class="group-dot" style="background:${color};"></div>
+            <div>
+              <div class="group-name">${escHtml(g.grupo)}</div>
+              <div class="group-total">${g.total} empresa${g.total !== 1 ? 's' : ''}</div>
+            </div>
+          </div>
+          <span class="group-arr">›</span>
+        </button>`;
+      }).join('');
+    } catch(e) { toast('Erro ao carregar segmentos.', 'error'); }
+  }
+ 
+  function selectGroup(group) {
+    currentGroup = group;
+    updateBreadcrumb();
+    loadCompanies({ city: currentCity, group });
+  }
+ 
+  // ── EMPRESAS ────────────────────────────────────────────────────────────────
+  async function loadCompanies({ city, group, q }) {
+    showPanel('companies');
+    const list = document.getElementById('company-list');
+    list.innerHTML = '<div style="padding:32px;text-align:center;"><div class="spinner spinner-dark" style="margin:0 auto;"></div></div>';
+    try {
+      let path = '/companies/list?';
+      if (city)  path += 'city='  + encodeURIComponent(city) + '&';
+      if (group) path += 'group=' + encodeURIComponent(group) + '&';
+      if (q)     path += 'q='     + encodeURIComponent(q);
+ 
+      const companies = await api(path);
+      document.getElementById('comp-count').textContent = companies.length + ' empresa' + (companies.length !== 1 ? 's' : '');
+ 
+      if (!companies.length) {
+        list.innerHTML = `<div class="empty-state">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <p>Nenhuma empresa disponível nesta seleção.</p>
+        </div>`;
+        return;
+      }
+ 
+      list.innerHTML = companies.map(c => {
+        const inWallet = c.in_my_wallet;
+        const tels = [c.tel1, c.tel2, c.tel3].filter(Boolean);
+        return `<div class="company-row">
+          <div class="company-row-info">
+            <div class="company-row-name">${escHtml(c.nome_fantasia || c.razao_social)}</div>
+            <div class="company-row-sub">
+              <span>📍 ${escHtml(c.municipio)}</span>
+              ${tels[0] ? `<span>📞 ${escHtml(tels[0])}</span>` : ''}
+              ${c.email ? `<span>✉ ${escHtml(c.email)}</span>` : ''}
+            </div>
+          </div>
+          <div class="company-row-actions">
+            ${inWallet
+              ? `<span class="badge badge-green">Na carteira</span>`
+              : `<button class="btn btn-sm btn-primary" onclick="addToWallet(${c.id}, this)">+ Carteira</button>`
+            }
+            <button class="btn btn-sm btn-secondary" onclick="openModal(${c.id})">Ver</button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) { toast('Erro ao carregar empresas.', 'error'); }
+  }
+ 
+  // ── BUSCA GLOBAL ────────────────────────────────────────────────────────────
+  let searchTimer;
+  document.getElementById('global-q').addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    const q = this.value.trim();
+    if (q.length < 2) return;
+    searchTimer = setTimeout(() => {
+      currentCity = ''; currentGroup = '';
+      updateBreadcrumb();
+      loadCompanies({ q });
+    }, 400);
+  });
+ 
+  // ── ADICIONAR À CARTEIRA ────────────────────────────────────────────────────
+  async function addToWallet(companyId, btn) {
+    btn.disabled = true;
+    btn.textContent = '…';
+    try {
+      await api('/wallet/add/' + companyId, { method: 'POST' });
+      btn.outerHTML = '<span class="badge badge-green">Na carteira</span>';
+      toast('Empresa adicionada à carteira.', 'success');
+    } catch(e) {
+      toast(e.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '+ Carteira';
+    }
+  }
+ 
+  // ── MODAL DETALHES ──────────────────────────────────────────────────────────
+  let allCompaniesCache = {};
+  async function openModal(id) {
+    document.getElementById('modal-company').style.display = 'flex';
+    document.getElementById('modal-name').textContent = 'Carregando…';
+    document.getElementById('modal-body').innerHTML = '';
+    try {
+      const c = await api('/companies/' + id);
+      document.getElementById('modal-name').textContent = c.nome_fantasia || c.razao_social;
+      const tels = [c.tel1, c.tel2, c.tel3].filter(Boolean);
+      document.getElementById('modal-body').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:0.875rem;">
+          <div><span style="color:var(--c-text-3);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Razão Social</span><br><span style="color:var(--c-text);font-weight:600;">${escHtml(c.razao_social)}</span></div>
+          <div><span style="color:var(--c-text-3);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">CNPJ</span><br><span style="font-family:monospace;">${fmt_cnpj(c.cnpj)}</span></div>
+          <div><span style="color:var(--c-text-3);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Município</span><br>${escHtml(c.municipio)}</div>
+          <div><span style="color:var(--c-text-3);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Segmento</span><br>${escHtml(c.segmento)}</div>
+          ${tels.length ? `<div><span style="color:var(--c-text-3);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Telefones</span><br>${tels.map(t=>`<a href="tel:${t}" style="display:block;margin-top:2px;font-weight:600;">${escHtml(t)}</a>`).join('')}</div>` : ''}
+          ${c.email ? `<div><span style="color:var(--c-text-3);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">E-mail</span><br><a href="mailto:${c.email}">${escHtml(c.email)}</a></div>` : ''}
+        </div>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--c-border);">
+          <button class="btn btn-primary btn-full" onclick="addToWalletFromModal(${c.id})">+ Adicionar à Carteira</button>
+        </div>`;
+    } catch(e) {
+      document.getElementById('modal-body').innerHTML = `<p style="color:var(--c-danger);">${e.message}</p>`;
+    }
+  }
+ 
+  async function addToWalletFromModal(id) {
+    try {
+      await api('/wallet/add/' + id, { method: 'POST' });
+      toast('Adicionada à carteira.', 'success');
+      document.getElementById('modal-company').style.display = 'none';
+      if (currentCity || currentGroup) loadCompanies({ city: currentCity, group: currentGroup });
+    } catch(e) { toast(e.message, 'error'); }
+  }
+ 
+  document.getElementById('modal-close').addEventListener('click', () => {
+    document.getElementById('modal-company').style.display = 'none';
+  });
+  document.getElementById('modal-company').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+  });
+ 
+  // ── INIT ────────────────────────────────────────────────────────────────────
+  updateBreadcrumb();
+  loadCities();
+ 
+  // Checar query string (ex: vindo do home com ?group=xxx)
+  const qs = new URLSearchParams(window.location.search);
+  if (qs.get('group')) { /* Filtra por grupo direto — simples */ }
+</script>
+</body>
+</html>

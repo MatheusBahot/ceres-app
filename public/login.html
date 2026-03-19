@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Entrar</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+  <style>
+    .stars {
+      position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+    }
+    .star {
+      position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%;
+      animation: twinkle var(--d) ease-in-out infinite var(--delay);
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0; }
+      50% { opacity: var(--op); }
+    }
+    .auth-bg { position: relative; }
+    .auth-bg > * { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+<div class="auth-bg">
+  <div class="stars" id="stars"></div>
+ 
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="/assets/logo.svg" alt="Ceres" width="64" height="64">
+      <h1>Ceres</h1>
+      <p>Plataforma de Prospecção Comercial<br>Refrigeração & Engenharia</p>
+    </div>
+ 
+    <form id="login-form" novalidate>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail</label>
+          <input class="form-input" type="email" id="email" name="email"
+                 placeholder="seu@email.com.br" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Senha</label>
+          <input class="form-input" type="password" id="password" name="password"
+                 placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+      </div>
+ 
+      <div id="auth-error" style="margin-top:14px;"></div>
+ 
+      <button class="btn btn-primary btn-full btn-lg" type="submit" id="submit-btn"
+              style="margin-top:20px;">
+        Entrar
+      </button>
+    </form>
+ 
+    <div class="auth-divider"></div>
+    <div class="auth-footer">
+      <a href="/recover">Esqueci minha senha</a>
+    </div>
+  </div>
+</div>
+ 
+<script>
+  // Redireciona se já logado
+  const stored = localStorage.getItem('ceres_token');
+  if (stored) window.location.href = '/home';
+ 
+  // Stars background
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() < 0.15 ? 3 : 2;
+    s.style.cssText = `
+      left:${Math.random()*100}%; top:${Math.random()*100}%;
+      width:${sz}px; height:${sz}px;
+      --d:${2+Math.random()*4}s;
+      --delay:-${Math.random()*5}s;
+      --op:${0.3+Math.random()*0.7};
+    `;
+    container.appendChild(s);
+  }
+ 
+  // Login
+  document.getElementById('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const errEl    = document.getElementById('auth-error');
+    const btn      = document.getElementById('submit-btn');
+ 
+    errEl.textContent = '';
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Entrando...';
+ 
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro ao entrar.');
+ 
+      localStorage.setItem('ceres_token', data.token);
+      localStorage.setItem('ceres_user', JSON.stringify(data.user));
+      window.location.href = '/home';
+    } catch(err) {
+      errEl.textContent = err.message;
+      btn.disabled = false;
+      btn.innerHTML = 'Entrar';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceres — Admin</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/ceres.css">
+  <style>
+    .page-head { padding: 40px 0 32px; border-bottom: 1px solid var(--c-border); margin-bottom: 32px; }
+    .page-head h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; }
+    .page-head p  { font-size: 0.9rem; color: var(--c-text-2); }
+ 
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 32px;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      border: none;
+      background: transparent;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--c-text-2);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--c-text); }
+    .tab-btn.active { color: var(--c-accent); border-bottom-color: var(--c-accent); }
+ 
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+ 
+    /* Vendedores */
+    .user-list { display: flex; flex-direction: column; gap: 8px; }
+    .user-row {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .user-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c-primary), var(--c-accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .user-info { flex: 1; }
+    .user-name  { font-size: 0.9rem; font-weight: 700; color: var(--c-text); }
+    .user-email { font-size: 0.78rem; color: var(--c-text-2); margin-top: 1px; }
+    .user-actions { display: flex; gap: 8px; flex-shrink: 0; }
+ 
+    /* Criar vendedor */
+    .create-card {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .create-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--c-text);
+    }
+    .create-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+ 
+    /* Carteiras overview */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .overview-card {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      padding: 18px 20px;
+    }
+    .overview-name  { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; }
+    .overview-bars  { display: flex; flex-direction: column; gap: 6px; }
+    .overview-bar   { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; }
+    .overview-bar-label { color: var(--c-text-2); width: 80px; }
+    .overview-bar-track {
+      flex: 1; height: 5px;
+      background: var(--c-bg);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .overview-bar-fill { height: 100%; border-radius: 3px; }
+    .overview-bar-num { color: var(--c-text); font-weight: 700; width: 24px; text-align: right; }
+ 
+    /* Reports */
+    .report-row {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius);
+      padding: 14px 16px;
+      margin-bottom: 8px;
+    }
+    .report-row-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+    .report-row-title { font-size: 0.88rem; font-weight: 700; flex: 1; }
+    .report-row-desc  { font-size: 0.8rem; color: var(--c-text-2); margin-top: 4px; line-height: 1.5; }
+    .report-row-meta  { font-size: 0.73rem; color: var(--c-text-3); margin-top: 6px; }
+  </style>
+</head>
+<body>
+ 
+<nav class="navbar">
+  <a class="navbar-brand" href="/home">
+    <img src="/assets/logo.svg" alt="Ceres" width="28" height="28">Ceres
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="/home">Início</a></li>
+    <li><a href="/search">Pesquisa</a></li>
+    <li><a href="/wallet">Carteira</a></li>
+    <li><a href="/reports">Reportar</a></li>
+    <li data-admin-only><a href="/admin">Admin</a></li>
+  </ul>
+  <div class="navbar-end">
+    <div class="dropdown">
+      <div class="avatar" id="user-dropdown-btn"></div>
+      <div class="dropdown-menu" id="user-dropdown" style="display:none;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--c-border);">
+          <div class="fw-600" style="font-size:0.9rem;" id="dd-name"></div>
+          <div class="text-muted text-xs" id="dd-email"></div>
+        </div>
+        <div class="sep"></div>
+        <button data-logout>Sair</button>
+      </div>
+    </div>
+  </div>
+</nav>
+ 
+<div class="page-wrapper">
+  <div class="container">
+ 
+    <div class="page-head">
+      <h1>Administração</h1>
+      <p>Gestão de vendedores, visão de carteiras e acompanhamento de reports.</p>
+    </div>
+ 
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('users',this)">Vendedores</button>
+      <button class="tab-btn" onclick="switchTab('wallets',this)">Carteiras</button>
+      <button class="tab-btn" onclick="switchTab('reports',this)">Reports <span id="reports-badge" class="badge badge-red" style="display:none;margin-left:4px;"></span></button>
+    </div>
+ 
+    <!-- TAB: VENDEDORES -->
+    <div class="tab-panel active" id="tab-users">
+ 
+      <div class="create-card">
+        <h4>Criar novo vendedor</h4>
+        <div class="create-fields">
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input class="form-input" id="new-name" placeholder="Nome completo">
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input class="form-input" id="new-email" type="email" placeholder="email@exemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <input class="form-input" id="new-pass" type="password" placeholder="Mín. 8 caracteres">
+          </div>
+        </div>
+        <div id="create-msg" style="min-height:18px;margin-bottom:10px;"></div>
+        <button class="btn btn-primary" id="create-btn" onclick="createUser()">Criar Vendedor</button>
+      </div>
+ 
+      <div class="user-list" id="user-list">
+        <div style="padding:24px;text-align:center;">
+          <div class="spinner spinner-dark" style="margin:0 auto;"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- TAB: CARTEIRAS -->
+    <div class="tab-panel" id="tab-wallets">
+      <div class="overview-grid" id="overview-grid">
+        <div style="padding:24px;text-align:center;grid-column:1/-1;">
+          <div class="spinner spinner-dark" style="margin:0 auto;"></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- TAB: REPORTS -->
+    <div class="tab-panel" id="tab-reports">
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="chip active" onclick="filterReports('',this)">Todos</button>
+        <button class="chip" onclick="filterReports('aberto',this)">Abertos</button>
+        <button class="chip" onclick="filterReports('em_analise',this)">Em análise</button>
+        <button class="chip" onclick="filterReports('resolvido',this)">Resolvidos</button>
+      </div>
+      <div id="reports-list">
+        <div style="padding:24px;text-align:center;">
+          <div class="spinner spinner-dark" style="margin:0 auto;"></div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<div id="toast-container"></div>
+<script src="/js/ceres.js"></script>
+<script>
+  requireAdmin();
+  const user = Auth.getUser();
+  const ddName  = document.getElementById('dd-name');
+  const ddEmail = document.getElementById('dd-email');
+  if (ddName)  ddName.textContent  = user?.name  || '';
+  if (ddEmail) ddEmail.textContent = user?.email || '';
+ 
+  // ── TABS ─────────────────────────────────────────────────────────────────
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    btn.classList.add('active');
+    if (tab === 'wallets') loadWallets();
+    if (tab === 'reports') loadReports('');
+  }
+ 
+  // ── VENDEDORES ────────────────────────────────────────────────────────────
+  async function loadUsers() {
+    try {
+      const users = await api('/auth/users');
+      const list  = document.getElementById('user-list');
+      const vendors = users.filter(u => u.role !== 'admin');
+      if (!vendors.length) {
+        list.innerHTML = '<p style="color:var(--c-text-3);font-size:0.85rem;">Nenhum vendedor cadastrado ainda.</p>';
+        return;
+      }
+      list.innerHTML = vendors.map(u => {
+        const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        return `<div class="user-row">
+          <div class="user-avatar">${initials}</div>
+          <div class="user-info">
+            <div class="user-name">${escHtml(u.name)}</div>
+            <div class="user-email">${escHtml(u.email)}</div>
+          </div>
+          <div class="user-actions">
+            <span class="badge ${u.active ? 'badge-green' : 'badge-red'}">${u.active ? 'Ativo' : 'Inativo'}</span>
+            <button class="btn btn-sm btn-secondary" onclick="toggleUser(${u.id}, ${u.active}, this)">
+              ${u.active ? 'Desativar' : 'Ativar'}
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) { toast('Erro ao carregar vendedores.', 'error'); }
+  }
+ 
+  async function createUser() {
+    const name  = document.getElementById('new-name').value.trim();
+    const email = document.getElementById('new-email').value.trim();
+    const pass  = document.getElementById('new-pass').value;
+    const msgEl = document.getElementById('create-msg');
+    const btn   = document.getElementById('create-btn');
+ 
+    if (!name || !email || !pass) {
+      msgEl.innerHTML = '<div class="alert alert-error">Preencha todos os campos.</div>';
+      return;
+    }
+    btn.disabled = true; btn.innerHTML = '<div class="spinner"></div>';
+    msgEl.innerHTML = '';
+    try {
+      const r = await api('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password: pass })
+      });
+      msgEl.innerHTML = '<div class="alert alert-success">' + r.message + '</div>';
+      document.getElementById('new-name').value  = '';
+      document.getElementById('new-email').value = '';
+      document.getElementById('new-pass').value  = '';
+      loadUsers();
+    } catch(e) {
+      msgEl.innerHTML = '<div class="alert alert-error">' + e.message + '</div>';
+    }
+    btn.disabled = false; btn.innerHTML = 'Criar Vendedor';
+  }
+ 
+  async function toggleUser(id, active, btn) {
+    btn.disabled = true;
+    try {
+      await api('/auth/users/' + id + '/toggle', { method: 'PATCH' });
+      loadUsers();
+    } catch(e) { toast(e.message, 'error'); btn.disabled = false; }
+  }
+ 
+  // ── CARTEIRAS ─────────────────────────────────────────────────────────────
+  async function loadWallets() {
+    const grid = document.getElementById('overview-grid');
+    grid.innerHTML = '<div style="padding:24px;text-align:center;grid-column:1/-1;"><div class="spinner spinner-dark" style="margin:0 auto;"></div></div>';
+    try {
+      const data = await api('/wallet/admin/overview');
+      if (!data.length) {
+        grid.innerHTML = '<p style="color:var(--c-text-3);font-size:0.85rem;">Nenhuma carteira ainda.</p>';
+        return;
+      }
+      grid.innerHTML = data.map(u => {
+        const maxVal = u.total || 1;
+        const bars = [
+          ['Prospectar', u.prospectar, '#0A84FF'],
+          ['Contatado',  u.contatado,  '#FF9F0A'],
+          ['Cliente',    u.cliente,    '#30D158'],
+          ['Perdido',    u.perdido,    '#FF453A'],
+        ];
+        return `<div class="overview-card">
+          <div class="overview-name">
+            ${escHtml(u.name)}
+            <span class="badge badge-blue" style="margin-left:6px;">${u.total}</span>
+          </div>
+          <div class="overview-bars">
+            ${bars.map(([label, val, color]) => `
+              <div class="overview-bar">
+                <span class="overview-bar-label">${label}</span>
+                <div class="overview-bar-track">
+                  <div class="overview-bar-fill" style="width:${Math.round((val||0)/maxVal*100)}%;background:${color};"></div>
+                </div>
+                <span class="overview-bar-num">${val||0}</span>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) { toast('Erro ao carregar carteiras.', 'error'); }
+  }
+ 
+  // ── REPORTS ───────────────────────────────────────────────────────────────
+  let allReports = [];
+ 
+  async function loadReports(status) {
+    const list = document.getElementById('reports-list');
+    list.innerHTML = '<div style="padding:24px;text-align:center;"><div class="spinner spinner-dark" style="margin:0 auto;"></div></div>';
+    try {
+      const path = status ? '/reports/?status=' + status : '/reports/';
+      allReports = await api(path);
+ 
+      // Badge de abertos
+      const openCount = allReports.filter(r => r.status === 'aberto').length;
+      const badge = document.getElementById('reports-badge');
+      if (openCount > 0) { badge.textContent = openCount; badge.style.display = 'inline-flex'; }
+      else { badge.style.display = 'none'; }
+ 
+      renderReports(allReports);
+    } catch(e) { toast('Erro ao carregar reports.', 'error'); }
+  }
+ 
+  function filterReports(status, btn) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = status ? allReports.filter(r => r.status === status) : allReports;
+    renderReports(filtered);
+  }
+ 
+  function renderReports(reports) {
+    const list = document.getElementById('reports-list');
+    if (!reports.length) {
+      list.innerHTML = '<p style="color:var(--c-text-3);font-size:0.85rem;">Nenhum report encontrado.</p>';
+      return;
+    }
+    const statusMap = { aberto:['badge-orange','Aberto'], em_analise:['badge-blue','Em análise'], resolvido:['badge-green','Resolvido'] };
+    const typeIcons = { erro:'⚠️', sugestao:'💡', atualizacao:'🔄' };
+    list.innerHTML = reports.map(r => {
+      const [sc, sl] = statusMap[r.status] || ['badge-gray','—'];
+      const date = new Date(r.created_at).toLocaleDateString('pt-BR');
+      return `<div class="report-row">
+        <div class="report-row-head">
+          <span>${typeIcons[r.type]||''}</span>
+          <span class="report-row-title">${escHtml(r.title)}</span>
+          <span class="badge ${sc}">${sl}</span>
+          ${r.status !== 'resolvido' ? `
+            <select class="status-select" style="font-size:0.75rem;padding:4px 8px;" onchange="updateReportStatus(${r.id},this.value)">
+              <option value="aberto"     ${r.status==='aberto'     ?'selected':''}>Aberto</option>
+              <option value="em_analise" ${r.status==='em_analise' ?'selected':''}>Em análise</option>
+              <option value="resolvido"  ${r.status==='resolvido'  ?'selected':''}>Resolvido</option>
+            </select>` : ''}
+        </div>
+        <div class="report-row-desc">${escHtml(r.description)}</div>
+        <div class="report-row-meta">
+          Por ${escHtml(r.user_name)} · ${date}
+          ${r.company_name ? ` · 📌 ${escHtml(r.company_name)}` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+ 
+  async function updateReportStatus(id, status) {
+    try {
+      await api('/reports/' + id + '/status', {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      toast('Status atualizado.', 'success');
+      loadReports('');
+    } catch(e) { toast(e.message, 'error'); }
+  }
+ 
+  // ── INIT ─────────────────────────────────────────────────────────────────
+  loadUsers();
+</script>
+</body>
+</html>
