@@ -1,5 +1,25 @@
+# Dependências
 node_modules/
+ 
+# Banco de dados (criado automaticamente no servidor)
 database/ceres.db
+*.db
+ 
+# Variáveis de ambiente
 .env
+ 
+# Logs
 *.log
+npm-debug.log*
+ 
+# Sistema
 .DS_Store
+ 
+# Arquivos duplicados/temporários do projeto
+db/
+scripts/
+data/empresas.json
+database/db.js
+public/index.html
+setup.sh
+{*

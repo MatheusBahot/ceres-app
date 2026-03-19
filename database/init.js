@@ -6,7 +6,7 @@ const fs       = require('fs');
 const DB_PATH   = path.join(__dirname, 'ceres.db');
 const JSON_PATH = path.join(__dirname, '../data/bd_definitivo.json');
  
-console.log('Iniciando banco de dados Ceres...');
+console.log('[init] Verificando banco de dados...');
  
 const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
@@ -76,76 +76,62 @@ db.exec(`
 const countExisting = db.prepare('SELECT COUNT(*) as c FROM companies').get().c;
  
 if (countExisting === 0) {
-  console.log('Importando empresas do banco de dados...');
- 
   if (!fs.existsSync(JSON_PATH)) {
-    console.error('ERRO: arquivo ' + JSON_PATH + ' nao encontrado.');
-    console.error('Copie o bd_definitivo.json para a pasta data/ e execute novamente.');
-    process.exit(1);
-  }
+    console.warn('[init] AVISO: bd_definitivo.json nao encontrado. Banco iniciado vazio.');
+    console.warn('[init] Adicione o arquivo em data/ e reinicie o servidor.');
+  } else {
+    console.log('[init] Importando empresas...');
+    const empresas = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
  
-  const raw      = fs.readFileSync(JSON_PATH, 'utf8');
-  const empresas = JSON.parse(raw);
- 
-  // Normaliza chaves — suporta tanto o formato novo quanto o original do Excel
-  function normaliza(e) {
-    return {
-      grupo:         e.grupo         || e['Grupo']          || e['grupo']          || 'OUTROS',
-      segmento:      e.Segmento      || e['Segmento']        || e['segmento']       || '',
-      nome_fantasia: e.Nome_Fantasia || e['Nome Fantasia']   || e['nome_fantasia']  || '',
-      razao_social:  e.Razao_Social  || e['Razão Social']    || e['razao_social']   || '',
-      cnpj:          e.CNPJ          || e['cnpj']            || '',
-      municipio:     e.Municipio     || e['Município']       || e['municipio']      || '',
-      tel1:          e.Tel1          || e['Telefone 1']      || e['tel1']           || '',
-      tel2:          e.Tel2          || e['Telefone 2']      || e['tel2']           || '',
-      tel3:          e.Tel3          || e['Telefone 3']      || e['tel3']           || '',
-      email:         e.Email         || e['E-mail']          || e['email']          || '',
-      prio:          e.prio          || 20,
-    };
-  }
- 
-  const insert = db.prepare(`
-    INSERT OR IGNORE INTO companies
-      (grupo, segmento, nome_fantasia, razao_social, cnpj,
-       municipio, tel1, tel2, tel3, email, prio)
-    VALUES
-      (@grupo, @segmento, @nome_fantasia, @razao_social, @cnpj,
-       @municipio, @tel1, @tel2, @tel3, @email, @prio)
-  `);
- 
-  const run = db.transaction(list => {
-    let ok = 0, skip = 0;
-    for (const e of list) {
-      try {
-        const n = normaliza(e);
-        if (!n.cnpj && !n.nome_fantasia) { skip++; continue; }
-        insert.run(n);
-        ok++;
-      } catch(err) { skip++; }
+    function normaliza(e) {
+      return {
+        grupo:         e.grupo         || e['Grupo']        || 'OUTROS',
+        segmento:      e.Segmento      || e['Segmento']     || '',
+        nome_fantasia: e.Nome_Fantasia || e['Nome Fantasia']|| '',
+        razao_social:  e.Razao_Social  || e['Razão Social'] || '',
+        cnpj:          e.CNPJ          || e['cnpj']         || '',
+        municipio:     e.Municipio     || e['Município']    || '',
+        tel1:          e.Tel1          || e['Telefone 1']   || '',
+        tel2:          e.Tel2          || e['Telefone 2']   || '',
+        tel3:          e.Tel3          || e['Telefone 3']   || '',
+        email:         e.Email         || e['E-mail']       || '',
+        prio:          e.prio          || 20,
+      };
     }
-    return { ok, skip };
-  });
  
-  const { ok, skip } = run(empresas);
-  console.log(ok + ' empresas importadas. ' + (skip ? skip + ' ignoradas.' : ''));
+    const insert = db.prepare(`
+      INSERT OR IGNORE INTO companies
+        (grupo, segmento, nome_fantasia, razao_social, cnpj,
+         municipio, tel1, tel2, tel3, email, prio)
+      VALUES
+        (@grupo, @segmento, @nome_fantasia, @razao_social, @cnpj,
+         @municipio, @tel1, @tel2, @tel3, @email, @prio)
+    `);
  
-  // Validar
-  const mun = db.prepare('SELECT COUNT(DISTINCT municipio) as c FROM companies').get().c;
-  console.log(mun + ' municipios distintos no banco.');
+    const run = db.transaction(list => {
+      let ok = 0;
+      for (const e of list) {
+        try { insert.run(normaliza(e)); ok++; } catch(_) {}
+      }
+      return ok;
+    });
  
+    const total = run(empresas);
+    const mun   = db.prepare('SELECT COUNT(DISTINCT municipio) as c FROM companies').get().c;
+    console.log('[init] ' + total + ' empresas | ' + mun + ' municipios.');
+  }
 } else {
   const mun = db.prepare('SELECT COUNT(DISTINCT municipio) as c FROM companies').get().c;
-  console.log('Banco ja carregado: ' + countExisting + ' empresas, ' + mun + ' municipios.');
+  console.log('[init] Banco existente: ' + countExisting + ' empresas | ' + mun + ' municipios.');
 }
  
 // ── ADMIN PADRÃO ──────────────────────────────────────────────────────────────
-const adminExists = db.prepare("SELECT id FROM users WHERE role='admin' LIMIT 1").get();
-if (!adminExists) {
-  const hash = bcrypt.hashSync('Ceres@2024!', 10);
-  db.prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)")
-    .run('Administrador', 'admin@ceresrefrigeracao.com.br', hash, 'admin');
-  console.log('Admin criado: admin@ceresrefrigeracao.com.br / Ceres@2024!');
+if (!db.prepare("SELECT id FROM users WHERE role='admin' LIMIT 1").get()) {
+  db.prepare("INSERT INTO users (name, email, password, role) VALUES (?,?,?,?)")
+    .run('Administrador', 'admin@ceresrefrigeracao.com.br',
+         bcrypt.hashSync('Ceres@2024!', 10), 'admin');
+  console.log('[init] Admin criado: admin@ceresrefrigeracao.com.br / Ceres@2024!');
 }
  
 db.close();
-console.log('Banco de dados pronto!');
+console.log('[init] OK.');

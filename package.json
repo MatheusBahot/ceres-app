@@ -7,7 +7,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "node database/init.js && node server.js",
+    "start": "node server.js",
     "dev": "npx nodemon server.js",
     "init-db": "node database/init.js"
   },

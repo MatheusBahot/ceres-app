@@ -3,6 +3,10 @@ const express = require('express');
 const path    = require('path');
 const cors    = require('cors');
  
+// ── INICIALIZAR BANCO NA SUBIDA DO SERVIDOR ───────────────────────────────────
+// Roda o init antes de qualquer rota, garante que o banco existe
+require('./database/init');
+ 
 const authRoutes      = require('./routes/auth');
 const companiesRoutes = require('./routes/companies');
 const walletRoutes    = require('./routes/wallet');
@@ -16,26 +20,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
  
+// ── HEALTH CHECK (UptimeRobot / Render) ──────────────────────────────────────
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', app: 'ceres', ts: new Date().toISOString() });
+});
+ 
+// ── API ───────────────────────────────────────────────────────────────────────
 app.use('/api/auth',      authRoutes);
 app.use('/api/companies', companiesRoutes);
 app.use('/api/wallet',    walletRoutes);
 app.use('/api/reports',   reportsRoutes);
  
+// ── PÁGINAS HTML ──────────────────────────────────────────────────────────────
 const pages = ['/', '/home', '/search', '/wallet', '/reports', '/admin'];
-pages.forEach(p => {
-  app.get(p, (req, res) => {
-    const file = p === '/' ? 'login.html' : p.slice(1) + '.html';
+pages.forEach(pg => {
+  app.get(pg, (req, res) => {
+    const file = pg === '/' ? 'login.html' : `${pg.slice(1)}.html`;
     res.sendFile(path.join(__dirname, 'public', file));
   });
 });
- 
 app.get('/recover', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'recover.html')));
  
-app.listen(PORT, () => {
-  console.log('\n Ceres rodando em http://localhost:' + PORT);
-  console.log('    Admin: admin@ceresrefrigeracao.com.br / Ceres@2024!\n');
-
-// Health check para UptimeRobot manter o serviço acordado
-app.get('/health', (req, res) => res.json({ status: 'ok', ts: Date.now() }));
-
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('Ceres rodando na porta ' + PORT);
+});
