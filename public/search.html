@@ -393,8 +393,8 @@ function renderCidades(lista) {
  
   grid.innerHTML = lista.map(c => {
     const nome = escHtml(c.municipio);
-    const nomeSafe = JSON.stringify(c.municipio);
-    return `<button class="city-btn" onclick="selecionarCidade(${nomeSafe})">${nome}</button>`;
+    const nomeSafe = c.municipio.replace(/'/g, "\\'");
+    return `<button class="city-btn" onclick="selecionarCidade('${nomeSafe}')">${nome}</button>`;
   }).join('');
 }
  
@@ -426,9 +426,9 @@ function renderGrupos(grupos) {
   el.innerHTML = grupos.map(g => {
     const cor   = COR_GRUPO[g.grupo] || '#6E6E73';
     const nome  = escHtml(g.grupo);
-    const nomeSafe = JSON.stringify(g.grupo);
+    const nomeSafe = g.grupo.replace(/'/g, "\\'");
     const qtd   = g.total;
-    return `<button class="group-btn" onclick="selecionarGrupo(${nomeSafe})">
+    return `<button class="group-btn" onclick="selecionarGrupo('${nomeSafe}')">
       <div class="group-esq">
         <div class="group-bolinha" style="background:${cor};"></div>
         <div>
