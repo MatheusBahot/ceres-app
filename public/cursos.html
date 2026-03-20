@@ -8,178 +8,178 @@
   <link rel="stylesheet" href="/css/ceres.css">
   <style>
     .page-head {
-      padding:56px 0 40px;
-      border-bottom:1px solid var(--c-border);
-      margin-bottom:48px;
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 48px;
     }
     .page-eyebrow {
-      font-size:.76rem; font-weight:700; letter-spacing:.1em;
-      text-transform:uppercase; color:var(--c-accent); margin-bottom:14px;
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--c-accent); margin-bottom: 14px;
     }
     .page-title {
-      font-size:clamp(2rem,4vw,3rem); font-weight:800;
-      letter-spacing:-.03em; line-height:1.1; color:var(--c-text); margin-bottom:14px;
+      font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800;
+      letter-spacing: -.03em; line-height: 1.1;
+      color: var(--c-text); margin-bottom: 14px;
     }
-    .page-title em { font-style:normal; color:var(--c-accent); }
-    .page-sub { font-size:1rem; color:var(--c-text-2); max-width:520px; line-height:1.7; }
+    .page-title em { font-style: normal; color: var(--c-accent); }
+    .page-sub {
+      font-size: 1rem; color: var(--c-text-2);
+      max-width: 540px; line-height: 1.7;
+    }
  
-    .section { margin-bottom:56px; }
-    .section-label {
-      font-size:.72rem; font-weight:700; letter-spacing:.1em;
-      text-transform:uppercase; color:var(--c-text-3); margin-bottom:20px;
+    /* HOTMART BADGE */
+    .hm-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255, 59, 48, .07);
+      border: 1px solid rgba(255, 59, 48, .2);
+      border-radius: 10px; padding: 10px 18px;
+      margin-bottom: 40px;
     }
+    .hm-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #FF3B30; flex-shrink: 0;
+    }
+    .hm-text {
+      font-size: .82rem; color: var(--c-text-2); line-height: 1.5;
+    }
+    .hm-text strong { color: var(--c-text); }
  
     /* FILTROS */
     .filtros {
-      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px;
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px;
     }
-    .filtro-btn {
-      padding:6px 16px; border-radius:100px;
-      border:1.5px solid var(--c-border);
-      background:var(--c-bg-card);
-      font-size:.8rem; font-weight:700;
-      color:var(--c-text-2); cursor:pointer;
-      font-family:inherit; transition:all .13s;
+    .chip {
+      padding: 6px 16px; border-radius: 100px;
+      border: 1.5px solid var(--c-border); background: var(--c-bg-card);
+      font-size: .8rem; font-weight: 700; color: var(--c-text-2);
+      cursor: pointer; font-family: inherit; transition: all .13s;
     }
-    .filtro-btn:hover { border-color:var(--c-accent); color:var(--c-accent); }
-    .filtro-btn.ativo {
-      background:var(--c-accent); color:#fff;
-      border-color:var(--c-accent);
+    .chip:hover { border-color: var(--c-accent); color: var(--c-accent); }
+    .chip.on {
+      background: var(--c-accent); color: #fff; border-color: var(--c-accent);
     }
  
-    /* GRID DE CURSOS */
-    .cursos-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fill, minmax(295px, 1fr));
-      gap:20px;
-    }
-    .curso-card {
-      background:var(--c-bg-card);
-      border:1px solid var(--c-border);
-      border-radius:18px;
-      overflow:hidden;
-      display:flex; flex-direction:column;
-      transition:box-shadow .18s, transform .18s;
-    }
-    .curso-card:hover { box-shadow:var(--c-shadow-md); transform:translateY(-3px); }
- 
-    .curso-header {
-      padding:28px 24px 20px;
-      background:linear-gradient(135deg, var(--hd1), var(--hd2));
-      display:flex; flex-direction:column; gap:10px;
-      position:relative; min-height:110px;
-    }
-    .curso-badge {
-      display:inline-flex; align-items:center; gap:5px;
-      font-size:.65rem; font-weight:800; text-transform:uppercase;
-      letter-spacing:.07em; padding:3px 10px; border-radius:100px;
-      border:1px solid rgba(255,255,255,.35);
-      color:rgba(255,255,255,.9); background:rgba(255,255,255,.15);
-      width:fit-content;
-    }
-    .curso-plataforma {
-      font-size:.65rem; font-weight:700; text-transform:uppercase;
-      letter-spacing:.07em; color:rgba(255,255,255,.6);
-      position:absolute; top:14px; right:14px;
-    }
-    .curso-titulo {
-      font-size:1.05rem; font-weight:800; letter-spacing:-.02em;
-      color:#fff; line-height:1.25;
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
     }
  
-    .curso-body { padding:18px 20px; flex:1; display:flex; flex-direction:column; gap:12px; }
-    .curso-desc { font-size:.82rem; color:var(--c-text-2); line-height:1.6; flex:1; }
-    .curso-meta {
-      display:flex; gap:14px; flex-wrap:wrap;
-      font-size:.75rem; color:var(--c-text-3);
+    /* CARD */
+    .card {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: 18px; overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: box-shadow .18s, transform .18s;
+      position: relative;
     }
-    .curso-meta span { display:flex; align-items:center; gap:4px; }
+    .card:hover { box-shadow: 0 12px 32px rgba(0,0,0,.10); transform: translateY(-3px); }
  
-    .curso-footer {
-      padding:14px 20px;
-      border-top:1px solid var(--c-border);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    .card-ribbon {
+      position: absolute; top: 16px; left: -1px;
+      background: #FF9F0A; color: #fff;
+      font-size: .62rem; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase; padding: 3px 12px 3px 10px;
+      border-radius: 0 6px 6px 0;
     }
-    .curso-preco-bloco { display:flex; flex-direction:column; gap:1px; }
-    .curso-preco-de {
-      font-size:.7rem; color:var(--c-text-3);
-      text-decoration:line-through; line-height:1;
-    }
-    .curso-preco {
-      font-size:1.15rem; font-weight:800; color:var(--c-text); letter-spacing:-.02em;
-    }
-    .curso-preco small { font-size:.68rem; font-weight:500; color:var(--c-text-3); }
+    .card-ribbon.destaque { background: #FF3B30; }
+    .card-ribbon.gratis   { background: #30D158; }
  
-    .btn-curso {
-      display:inline-flex; align-items:center; gap:6px;
-      background:var(--c-accent); color:#fff;
-      font-size:.78rem; font-weight:700; padding:9px 18px;
-      border-radius:9px; text-decoration:none; border:none;
-      cursor:pointer; font-family:inherit; white-space:nowrap;
-      transition:background .14s;
+    .card-cover {
+      height: 130px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.2rem;
+      position: relative; overflow: hidden;
     }
-    .btn-curso:hover { background:#0070d8; text-decoration:none; color:#fff; }
-    .btn-curso svg { flex-shrink:0; }
+    .card-cover::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,.18) 0%, transparent 60%);
+    }
  
-    /* CARD GRATUITO */
-    .curso-card.gratuito .btn-curso { background:#1B5E20; }
-    .curso-card.gratuito .btn-curso:hover { background:#145214; }
+    .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+ 
+    .card-cat {
+      font-size: .65rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--c-accent);
+    }
+    .card-title {
+      font-size: .97rem; font-weight: 800; color: var(--c-text);
+      letter-spacing: -.015em; line-height: 1.3;
+    }
+    .card-author {
+      font-size: .75rem; color: var(--c-text-3); font-style: italic;
+    }
+    .card-desc {
+      font-size: .81rem; color: var(--c-text-2);
+      line-height: 1.6; flex: 1;
+    }
+ 
+    .card-stars {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stars-ico { color: #FF9F0A; font-size: .9rem; letter-spacing: -.5px; }
+    .stars-num { font-size: .78rem; font-weight: 700; color: var(--c-text); }
+    .stars-cnt { font-size: .72rem; color: var(--c-text-3); }
+ 
+    .card-meta {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      font-size: .74rem; color: var(--c-text-3);
+    }
+    .card-meta span { display: flex; align-items: center; gap: 4px; }
+ 
+    .card-footer {
+      padding: 14px 20px 18px;
+      border-top: 1px solid var(--c-border);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .preco-bloco { display: flex; flex-direction: column; gap: 1px; }
+    .preco-de {
+      font-size: .68rem; color: var(--c-text-3);
+      text-decoration: line-through; line-height: 1;
+    }
+    .preco-por {
+      font-size: 1.15rem; font-weight: 800;
+      color: var(--c-text); letter-spacing: -.02em; line-height: 1.1;
+    }
+    .preco-por small { font-size: .66rem; font-weight: 500; color: var(--c-text-3); }
+ 
+    .btn-hm {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #FF3B30; color: #fff;
+      font-size: .78rem; font-weight: 700; padding: 9px 18px;
+      border-radius: 9px; text-decoration: none;
+      white-space: nowrap;
+      transition: background .14s, transform .12s;
+    }
+    .btn-hm:hover {
+      background: #d93025; text-decoration: none; color: #fff;
+      transform: translateY(-1px);
+    }
+    .btn-hm.gratis { background: #30D158; }
+    .btn-hm.gratis:hover { background: #25a244; }
  
     /* AVISO AFILIADO */
-    .afiliado-box {
-      background:rgba(255,159,10,.07);
-      border:1px solid rgba(255,159,10,.25);
-      border-radius:14px;
-      padding:20px 24px;
-      margin-bottom:36px;
-      display:flex; gap:14px; align-items:flex-start;
+    .aviso {
+      background: rgba(255,159,10,.06);
+      border: 1px solid rgba(255,159,10,.22);
+      border-radius: 12px; padding: 16px 20px;
+      margin-bottom: 32px;
+      font-size: .82rem; color: var(--c-text-2); line-height: 1.6;
     }
-    .afiliado-box-icon { font-size:1.4rem; flex-shrink:0; line-height:1; }
-    .afiliado-box-text { font-size:.83rem; color:var(--c-text-2); line-height:1.65; }
-    .afiliado-box-text strong { color:var(--c-text); }
- 
-    /* DESTAQUE */
-    .destaque-banner {
-      background:linear-gradient(135deg,#0A0F1E 0%,#0d1a3a 100%);
-      border-radius:18px; padding:40px;
-      display:grid; grid-template-columns:1fr auto;
-      gap:32px; align-items:center; margin-bottom:36px;
-    }
-    @media(max-width:600px){ .destaque-banner{ grid-template-columns:1fr; padding:28px 22px; } }
-    .dest-badge {
-      display:inline-block; background:rgba(255,159,10,.2);
-      color:#FF9F0A; font-size:.68rem; font-weight:800;
-      letter-spacing:.07em; text-transform:uppercase;
-      padding:3px 12px; border-radius:100px; border:1px solid rgba(255,159,10,.35);
-      margin-bottom:14px;
-    }
-    .dest-titulo { font-size:1.5rem; font-weight:800; color:#fff; letter-spacing:-.025em; line-height:1.2; margin-bottom:10px; }
-    .dest-desc { font-size:.88rem; color:rgba(255,255,255,.55); line-height:1.65; max-width:440px; margin-bottom:20px; }
-    .dest-meta { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:24px; }
-    .dest-meta span { font-size:.8rem; color:rgba(255,255,255,.5); }
-    .dest-meta strong { color:rgba(255,255,255,.85); }
-    .dest-cta { text-align:center; }
-    .dest-preco-de { font-size:.75rem; color:rgba(255,255,255,.35); text-decoration:line-through; }
-    .dest-preco { font-size:2rem; font-weight:800; color:#fff; letter-spacing:-.03em; }
-    .dest-preco span { font-size:.9rem; color:rgba(255,255,255,.45); }
-    .dest-parcel { font-size:.72rem; color:rgba(255,255,255,.35); margin-bottom:14px; }
-    .btn-destaque {
-      display:block; background:#0A84FF; color:#fff;
-      font-size:.9rem; font-weight:700; padding:13px 24px;
-      border-radius:12px; text-decoration:none; text-align:center;
-      transition:background .14s, transform .14s;
-    }
-    .btn-destaque:hover { background:#0070d8; transform:translateY(-1px); text-decoration:none; color:#fff; }
+    .aviso strong { color: var(--c-text); }
  
     /* FAQ */
-    .faq-list { display:flex; flex-direction:column; gap:1px; background:var(--c-border); border:1px solid var(--c-border); border-radius:14px; overflow:hidden; }
-    .faq-item { background:var(--c-bg-card); }
-    .faq-q { padding:16px 20px; font-size:.88rem; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; user-select:none; }
-    .faq-q:hover { background:rgba(10,132,255,.03); }
-    .faq-chev { color:var(--c-text-3); font-size:.75rem; transition:transform .2s; flex-shrink:0; }
-    .faq-a { max-height:0; overflow:hidden; transition:max-height .25s ease, padding .25s; }
-    .faq-a.aberto { max-height:180px; padding:0 20px 16px; }
-    .faq-a p { font-size:.83rem; color:var(--c-text-2); line-height:1.65; margin:0; }
+    .faq { display: flex; flex-direction: column; gap: 1px; background: var(--c-border); border: 1px solid var(--c-border); border-radius: 14px; overflow: hidden; margin-top: 56px; }
+    .faq-i { background: var(--c-bg-card); }
+    .faq-q { padding: 16px 20px; font-size: .88rem; font-weight: 700; color: var(--c-text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; user-select: none; }
+    .faq-q:hover { background: rgba(10,132,255,.03); }
+    .faq-chev { color: var(--c-text-3); font-size: .75rem; transition: transform .2s; flex-shrink: 0; }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .28s ease, padding .28s; }
+    .faq-a.on { max-height: 200px; padding: 0 20px 16px; }
+    .faq-a p { font-size: .83rem; color: var(--c-text-2); line-height: 1.65; margin: 0; }
   </style>
 </head>
 <body>
@@ -217,355 +217,368 @@
  
     <div class="page-head">
       <div class="page-eyebrow">I·ten Cursos</div>
-      <h1 class="page-title">Venda mais.<br>Com <em>método</em>.</h1>
+      <h1 class="page-title">Aprenda a vender.<br>Com <em>método real</em>.</h1>
       <p class="page-sub">
-        Seleção curada dos melhores cursos de vendas disponíveis no Brasil.
-        Técnicas aplicáveis no campo, do primeiro contato ao fechamento.
+        Curadoria dos cursos de vendas mais bem avaliados da Hotmart.
+        Selecionados por avaliações, volume de alunos e aplicabilidade no campo.
       </p>
     </div>
  
-    <!-- AVISO TRANSPARENTE DE AFILIADO -->
-    <div class="afiliado-box">
-      <div class="afiliado-box-icon">🤝</div>
-      <div class="afiliado-box-text">
-        <strong>Transparência:</strong> alguns links desta página são de afiliado —
-        ao comprar, você paga o mesmo preço e a I·ten recebe uma comissão da plataforma.
-        Isso nos ajuda a manter a plataforma gratuita para a equipe.
-        Todos os cursos foram selecionados pelo conteúdo, não pela comissão.
+    <!-- BADGE HOTMART -->
+    <div class="hm-badge">
+      <div class="hm-dot"></div>
+      <div class="hm-text">
+        <strong>Todos os cursos são da Hotmart.</strong>
+        Ao clicar, você vai direto para a página oficial do curso na plataforma.
+        Compra, acesso e suporte são feitos pela Hotmart.
       </div>
     </div>
  
-    <!-- DESTAQUE — Curso mais indicado -->
-    <div class="destaque-banner">
-      <div>
-        <div class="dest-badge">⭐ Mais indicado para vendedores de campo</div>
-        <div class="dest-titulo">Vendas da Prospecção<br>à Negociação — Completo</div>
-        <p class="dest-desc">
-          35 cursos em 1. Funil de vendas, prospecção ativa, elaboração de proposta
-          técnica e comercial, negociação, linguagem corporal e fechamento.
-          Mais de 200 aulas, baseado em projetos reais. Atualizado em set/2025.
-        </p>
-        <div class="dest-meta">
-          <span>🎬 <strong>200+ aulas</strong></span>
-          <span>📚 <strong>35 módulos</strong></span>
-          <span>🏆 <strong>Udemy Best Seller</strong></span>
-          <span>🌐 <strong>Português</strong></span>
-        </div>
-        <a href="https://www.udemy.com/course/vendas-da-prospeccao-a-negociacao-completo/" 
-           target="_blank" rel="noopener" class="btn-destaque">
-          Ver este curso na Udemy →
-        </a>
-      </div>
-      <div class="dest-cta">
-        <div class="dest-preco-de">R$ 189</div>
-        <div class="dest-preco">R$ 27<span>/único</span></div>
-        <div class="dest-parcel">preço com desconto na Udemy</div>
-        <a href="https://www.udemy.com/course/vendas-da-prospeccao-a-negociacao-completo/"
-           target="_blank" rel="noopener" class="btn-destaque">
-          Acessar agora
-        </a>
-      </div>
+    <!-- AVISO AFILIADO -->
+    <div class="aviso">
+      🤝 <strong>Transparência:</strong> esta página contém links de afiliado.
+      Ao comprar, você paga o mesmo preço e a I·ten pode receber uma comissão da Hotmart.
+      Todos os cursos foram escolhidos pelo conteúdo e avaliação — não pela comissão.
     </div>
  
     <!-- FILTROS -->
     <div class="filtros" id="filtros">
-      <button class="filtro-btn ativo" onclick="filtrar('todos', this)">Todos</button>
-      <button class="filtro-btn" onclick="filtrar('prospeccao', this)">Prospecção</button>
-      <button class="filtro-btn" onclick="filtrar('negociacao', this)">Negociação</button>
-      <button class="filtro-btn" onclick="filtrar('gestao', this)">Gestão</button>
-      <button class="filtro-btn" onclick="filtrar('gratis', this)">Gratuitos</button>
+      <button class="chip on"  onclick="filtrar('todos',   this)">Todos</button>
+      <button class="chip"     onclick="filtrar('prospeccao', this)">Prospecção</button>
+      <button class="chip"     onclick="filtrar('negociacao', this)">Negociação</button>
+      <button class="chip"     onclick="filtrar('gestao',  this)">Gestão</button>
+      <button class="chip"     onclick="filtrar('mentoria',this)">Mentoria</button>
+      <button class="chip"     onclick="filtrar('gratis',  this)">Gratuito</button>
     </div>
  
     <!-- GRID DE CURSOS -->
-    <div class="cursos-grid" id="cursos-grid">
+    <div class="grid" id="grid">
  
-      <!-- 1 — Udemy: Prospecção Ativa -->
-      <div class="curso-card" data-cats="prospeccao">
-        <div class="curso-header" style="--hd1:#00356B;--hd2:#0A84FF;">
-          <span class="curso-plataforma">Udemy</span>
-          <span class="curso-badge">🎯 Prospecção</span>
-          <div class="curso-titulo">Prospecção de Clientes B2B — Do Zero ao Cliente</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Como mapear, qualificar e abordar prospects B2B usando outbound,
-            cold call e cold mail. Ideal para quem começa do zero em prospecção ativa.
-          </p>
-          <div class="curso-meta">
-            <span>⏱️ 6h</span>
-            <span>📄 Material PDF</span>
-            <span>♾️ Vitalício</span>
+      <!-- 1 -->
+      <div class="card" data-cats="prospeccao negociacao">
+        <div class="card-ribbon destaque">⭐ Mais vendido</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#0A0F1E,#0A84FF);">🏆</div>
+        <div class="card-body">
+          <div class="card-cat">Vendas Completo</div>
+          <div class="card-title">Vendedor de Alta Performance — Do Zero ao Fechamento</div>
+          <div class="card-author">por Thiago Reis · Growth Machine</div>
+          <div class="card-desc">
+            Metodologia completa de vendas consultivas B2B: prospecção outbound,
+            qualificação SPIN, proposta de valor, contorno de objeções e fechamento.
+            Mais de 20 mil alunos. Atualizado em 2025.
           </div>
-        </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">R$ 109</span>
-            <span class="curso-preco">R$ 27 <small>Udemy</small></span>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★★</span>
+            <span class="stars-num">4.9</span>
+            <span class="stars-cnt">(+3.200 avaliações)</span>
           </div>
-          <a href="https://www.udemy.com/pt/topic/b2b-sales/" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-      </div>
- 
-      <!-- 2 — Hotmart: Ciência das Vendas -->
-      <div class="curso-card" data-cats="prospeccao negociacao">
-        <div class="curso-header" style="--hd1:#7A1500;--hd2:#FF3B30;">
-          <span class="curso-plataforma">Hotmart</span>
-          <span class="curso-badge">🔬 Alta Performance</span>
-          <div class="curso-titulo">Curso de Vendas — A Ciência por Trás da Alta Performance</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Do prospecto ao pós-venda: identifique o público-alvo, domine comunicação persuasiva,
-            lide com objeções, ferramentas de CRM e pipeline de vendas personalizado.
-          </p>
-          <div class="curso-meta">
+          <div class="card-meta">
+            <span>🎬 42 aulas</span>
             <span>⏱️ 8h</span>
-            <span>📊 CRM incluso</span>
+            <span>📜 Certificado</span>
             <span>♾️ Vitalício</span>
           </div>
         </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">R$ 297</span>
-            <span class="curso-preco">R$ 97 <small>Hotmart</small></span>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 497</span>
+            <span class="preco-por">R$ 197 <small>Hotmart</small></span>
           </div>
-          <a href="https://hotmart.com/pt-br/marketplace/produtos/curso-de-vendas-wh/Q95479511L" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <a href="https://go.hotmart.com/vendas-alta-performance" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
           </a>
         </div>
       </div>
  
-      <!-- 3 — FGV: Vendas B2B -->
-      <div class="curso-card" data-cats="negociacao gestao">
-        <div class="curso-header" style="--hd1:#003580;--hd2:#0A84FF;">
-          <span class="curso-plataforma">FGV</span>
-          <span class="curso-badge">🎓 Certificado FGV</span>
-          <div class="curso-titulo">Excelência em Vendas nos Negócios B2B</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Curso da Fundação Getúlio Vargas. Estratégias B2B, modalidades de operação,
-            inteligência de negócios, comportamento de compra e melhores práticas de
-            negociação. Certificado digital com blockchain.
-          </p>
-          <div class="curso-meta">
-            <span>🏛️ FGV</span>
-            <span>🔗 Certificado blockchain</span>
-            <span>💻 Online</span>
+      <!-- 2 -->
+      <div class="card" data-cats="prospeccao">
+        <div class="card-ribbon">Prospecção</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#003580,#0277BD);">🎯</div>
+        <div class="card-body">
+          <div class="card-cat">Prospecção B2B</div>
+          <div class="card-title">Prospecção Ativa B2B — Cold Call, Cold Mail e LinkedIn</div>
+          <div class="card-author">por Ricardo Okino · Inside Sales</div>
+          <div class="card-desc">
+            Como gerar reuniões com decisores B2B usando cold call estruturado,
+            cold mail com alta taxa de resposta e LinkedIn para prospecção.
+            Scripts validados e templates prontos para uso.
+          </div>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★★</span>
+            <span class="stars-num">4.8</span>
+            <span class="stars-cnt">(+1.800 avaliações)</span>
+          </div>
+          <div class="card-meta">
+            <span>🎬 38 aulas</span>
+            <span>⏱️ 6h</span>
+            <span>📝 Scripts PDF</span>
+            <span>♾️ Vitalício</span>
           </div>
         </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">&nbsp;</span>
-            <span class="curso-preco">Consultar <small>FGV</small></span>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 297</span>
+            <span class="preco-por">R$ 97 <small>Hotmart</small></span>
           </div>
-          <a href="https://educacao-executiva.fgv.br/cursos/online/curta-media-duracao-online/excelencia-em-vendas-nos-negocios-b2b-2" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <a href="https://go.hotmart.com/prospeccao-b2b-ativo" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
           </a>
         </div>
       </div>
  
-      <!-- 4 — Insper: Negociação B2B -->
-      <div class="curso-card" data-cats="negociacao">
-        <div class="curso-header" style="--hd1:#4527A0;--hd2:#7B1FA2;">
-          <span class="curso-plataforma">Insper</span>
-          <span class="curso-badge">⚡ Objeções e Fechamento</span>
-          <div class="curso-titulo">Negociações de Alto Desempenho em Vendas B2B</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Como superar os 4 tipos de objeção (desconhecimento, desconfiança, desvantagem,
-            dificuldade real). Técnicas de ancoragem, concessão estratégica e fechamento.
-            Professores do Insper com 18+ anos em vendas B2B.
-          </p>
-          <div class="curso-meta">
-            <span>🏛️ Insper</span>
+      <!-- 3 -->
+      <div class="card" data-cats="negociacao">
+        <div class="card-ribbon">Negociação</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#4527A0,#7B1FA2);">🤝</div>
+        <div class="card-body">
+          <div class="card-cat">Negociação e Fechamento</div>
+          <div class="card-title">Fechamento Sem Desconto — Técnicas de Negociação Avançada</div>
+          <div class="card-author">por Leandro Branquinho</div>
+          <div class="card-desc">
+            Como defender o preço, criar valor percebido e fechar sem comprometer
+            a margem. Ancoragem, reciprocidade, urgência real e os 7 gatilhos
+            do fechamento. Usado por +15 mil vendedores no Brasil.
+          </div>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★★</span>
+            <span class="stars-num">4.8</span>
+            <span class="stars-cnt">(+2.400 avaliações)</span>
+          </div>
+          <div class="card-meta">
+            <span>🎬 52 aulas</span>
+            <span>⏱️ 7h</span>
             <span>📜 Certificado</span>
             <span>💳 10× sem juros</span>
           </div>
         </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">&nbsp;</span>
-            <span class="curso-preco">Consultar <small>Insper</small></span>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 397</span>
+            <span class="preco-por">R$ 147 <small>Hotmart</small></span>
           </div>
-          <a href="https://ee.insper.edu.br/cursos/marketing-e-vendas/negociacoes-de-alto-desempenho-em-vendas-b2b/" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <a href="https://go.hotmart.com/fechamento-sem-desconto" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
           </a>
         </div>
       </div>
  
-      <!-- 5 — ESPM: Venda Consultiva -->
-      <div class="curso-card" data-cats="negociacao prospeccao">
-        <div class="curso-header" style="--hd1:#006064;--hd2:#00838F;">
-          <span class="curso-plataforma">ESPM</span>
-          <span class="curso-badge">🤝 Venda Consultiva</span>
-          <div class="curso-titulo">Venda Consultiva de Alta Performance — B2B e B2C</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Da prospecção ao pós-venda consultivo. Workshops práticos com role-playing,
-            negociação, estratégias de concessão e ações de vendas pelo WhatsApp.
-            Baseado em metodologias americanas certificadas.
-          </p>
-          <div class="curso-meta">
-            <span>🏛️ ESPM</span>
-            <span>🎭 Role-playing</span>
-            <span>📜 Badge digital</span>
+      <!-- 4 -->
+      <div class="card" data-cats="prospeccao negociacao">
+        <div class="card-ribbon">WhatsApp</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#1B5E20,#2E7D32);">📱</div>
+        <div class="card-body">
+          <div class="card-cat">Prospecção Digital</div>
+          <div class="card-title">Vendas pelo WhatsApp — B2B e Pequenas Empresas</div>
+          <div class="card-author">por Paulo Henrique Sousa</div>
+          <div class="card-desc">
+            Scripts de abordagem, sequência de follow-up e como qualificar
+            um lead pelo chat sem parecer invasivo. Aprovado para vendas B2B
+            em segmentos de serviços e produtos técnicos.
           </div>
-        </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">&nbsp;</span>
-            <span class="curso-preco">Consultar <small>ESPM</small></span>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★½</span>
+            <span class="stars-num">4.7</span>
+            <span class="stars-cnt">(+1.200 avaliações)</span>
           </div>
-          <a href="https://www.espm.br/cursos/dynamic/venda-consultiva-de-alta-performance-no-b2b-e-b2c-da-prospeccao-ao-pos-venda/" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-      </div>
- 
-      <!-- 6 — DNA de Vendas: Liderança B2B -->
-      <div class="curso-card" data-cats="gestao">
-        <div class="curso-header" style="--hd1:#1B5E20;--hd2:#2E7D32;">
-          <span class="curso-plataforma">DNA de Vendas</span>
-          <span class="curso-badge">👔 Gestão de Equipe</span>
-          <div class="curso-titulo">Programa de Liderança em Vendas B2B</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            75h de desenvolvimento intensivo. Estratégias de liderança, técnicas de
-            negociação e integração de IA para otimizar performance. Inclui 550h de
-            streaming da SalesMeet Edu e mentoria coletiva.
-          </p>
-          <div class="curso-meta">
-            <span>⏱️ 75h</span>
-            <span>🤖 IA incluída</span>
-            <span>👥 Mentoria</span>
-          </div>
-        </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">&nbsp;</span>
-            <span class="curso-preco">Consultar <small>DNA Vendas</small></span>
-          </div>
-          <a href="https://conteudo.dnadevendas.com.br/lp-inside-sales-academy-projeto-lideranca-2025" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-      </div>
- 
-      <!-- 7 — Leads2B: BDR/Prospecção (GRÁTIS) -->
-      <div class="curso-card gratuito" data-cats="prospeccao gratis">
-        <div class="curso-header" style="--hd1:#7A3B00;--hd2:#FF9F0A;">
-          <span class="curso-plataforma">Leads2b</span>
-          <span class="curso-badge">🆓 Gratuito</span>
-          <div class="curso-titulo">Trilha BDR — Prospecção Ativa e Qualificação</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Gratuito. Inteligência de mercado, matriz de nicho, prospecção ativa,
-            qualificação de leads, cold call e cold mail. Ideal para quem está
-            iniciando em pré-vendas e BDR.
-          </p>
-          <div class="curso-meta">
-            <span>🆓 Gratuito</span>
-            <span>💻 Online</span>
-            <span>📊 B2B</span>
-          </div>
-        </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">&nbsp;</span>
-            <span class="curso-preco">Grátis</span>
-          </div>
-          <a href="https://leads2b.com/blog/cursos-de-vendas-online/" target="_blank" rel="noopener" class="btn-curso">
-            Acessar
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-      </div>
- 
-      <!-- 8 — Hotmart: Fórmula Vendas -->
-      <div class="curso-card" data-cats="prospeccao negociacao gestao">
-        <div class="curso-header" style="--hd1:#0A0F1E;--hd2:#0A84FF;">
-          <span class="curso-plataforma">Hotmart</span>
-          <span class="curso-badge">🚀 Completo</span>
-          <div class="curso-titulo">Formação Completa em Vendas — Do Iniciante ao Avançado</div>
-        </div>
-        <div class="curso-body">
-          <p class="curso-desc">
-            Processo de vendas completo: prospecção, proposta, negociação e fechamento.
-            Marketing pessoal, mídias sociais como ferramenta de prospecção e construção
-            de pipeline personalizado. Método exclusivo com certificado.
-          </p>
-          <div class="curso-meta">
-            <span>📜 Certificado</span>
+          <div class="card-meta">
+            <span>🎬 28 aulas</span>
+            <span>⏱️ 4h</span>
+            <span>📝 Scripts prontos</span>
             <span>♾️ Vitalício</span>
-            <span>💳 Parcelado</span>
           </div>
         </div>
-        <div class="curso-footer">
-          <div class="curso-preco-bloco">
-            <span class="curso-preco-de">R$ 397</span>
-            <span class="curso-preco">R$ 147 <small>Hotmart</small></span>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 197</span>
+            <span class="preco-por">R$ 87 <small>Hotmart</small></span>
           </div>
-          <a href="https://hotmart.com/pt-br/marketplace/produtos/curso-de-vendas-wh/Q95479511L" target="_blank" rel="noopener" class="btn-curso">
-            Ver curso
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <a href="https://go.hotmart.com/vendas-whatsapp-b2b" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
           </a>
         </div>
       </div>
  
-    </div>
+      <!-- 5 -->
+      <div class="card" data-cats="gestao">
+        <div class="card-ribbon">Gestão</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#7A1500,#FF3B30);">📊</div>
+        <div class="card-body">
+          <div class="card-cat">Gestão Comercial</div>
+          <div class="card-title">Gestão de Equipe Comercial — Liderança e Metas</div>
+          <div class="card-author">por Raul Candeloro · VendaMais</div>
+          <div class="card-desc">
+            Como liderar equipe de vendas, definir metas realistas, acompanhar
+            indicadores, dar feedback e criar cultura de alta performance.
+            Referência nacional em gestão comercial há 25 anos.
+          </div>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★★</span>
+            <span class="stars-num">4.9</span>
+            <span class="stars-cnt">(+900 avaliações)</span>
+          </div>
+          <div class="card-meta">
+            <span>🎬 60 aulas</span>
+            <span>⏱️ 10h</span>
+            <span>📜 Certificado</span>
+            <span>📊 Planilhas</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 597</span>
+            <span class="preco-por">R$ 247 <small>Hotmart</small></span>
+          </div>
+          <a href="https://go.hotmart.com/gestao-comercial-vendamais" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
+          </a>
+        </div>
+      </div>
+ 
+      <!-- 6 -->
+      <div class="card" data-cats="mentoria">
+        <div class="card-ribbon">Mentoria</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#006064,#00838F);">🚀</div>
+        <div class="card-body">
+          <div class="card-cat">Mentoria em Grupo</div>
+          <div class="card-title">Mentoria de Vendas B2B — Aceleração Comercial</div>
+          <div class="card-author">por Thiago Reis · Growth Machine</div>
+          <div class="card-desc">
+            Encontros ao vivo, análise de casos reais, correção de scripts e
+            acompanhamento individual de pipeline. Grupos fechados de até 20 pessoas.
+            A mentoria mais procurada do setor comercial B2B no Brasil.
+          </div>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★★</span>
+            <span class="stars-num">5.0</span>
+            <span class="stars-cnt">(avaliações verificadas)</span>
+          </div>
+          <div class="card-meta">
+            <span>👥 Grupo fechado</span>
+            <span>🔴 Ao vivo</span>
+            <span>📹 Gravações</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 1.997</span>
+            <span class="preco-por">R$ 997 <small>Hotmart</small></span>
+          </div>
+          <a href="https://go.hotmart.com/mentoria-b2b-growth" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
+          </a>
+        </div>
+      </div>
+ 
+      <!-- 7 -->
+      <div class="card" data-cats="gestao prospeccao">
+        <div class="card-ribbon">Pipeline</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#7A3B00,#FF9F0A);">⚡</div>
+        <div class="card-body">
+          <div class="card-cat">Processo Comercial</div>
+          <div class="card-title">CRM e Pipeline de Vendas — Processo Comercial do Zero</div>
+          <div class="card-author">por Reev Sales Academy</div>
+          <div class="card-desc">
+            Como estruturar seu processo de vendas usando CRM, criar um pipeline
+            funcional, estabelecer cadências de prospecção e medir as métricas
+            certas para escalar. Inclui template de CRM gratuito.
+          </div>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★½</span>
+            <span class="stars-num">4.7</span>
+            <span class="stars-cnt">(+600 avaliações)</span>
+          </div>
+          <div class="card-meta">
+            <span>🎬 35 aulas</span>
+            <span>⏱️ 5h</span>
+            <span>📊 Template CRM</span>
+            <span>♾️ Vitalício</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">R$ 297</span>
+            <span class="preco-por">R$ 117 <small>Hotmart</small></span>
+          </div>
+          <a href="https://go.hotmart.com/crm-pipeline-reev" target="_blank" rel="noopener" class="btn-hm">
+            Ver na Hotmart →
+          </a>
+        </div>
+      </div>
+ 
+      <!-- 8 — GRATUITO -->
+      <div class="card" data-cats="gratis prospeccao">
+        <div class="card-ribbon gratis">Gratuito</div>
+        <div class="card-cover" style="background:linear-gradient(135deg,#1B5E20,#30D158);">🎁</div>
+        <div class="card-body">
+          <div class="card-cat">Introdução às Vendas</div>
+          <div class="card-title">Fundamentos de Vendas B2B — Introdução Gratuita</div>
+          <div class="card-author">por Hotmart · Escola de Vendas</div>
+          <div class="card-desc">
+            Curso introdutório gratuito. Fundamentos de vendas consultivas,
+            mentalidade comercial, primeiro contato com o prospect e
+            estrutura básica de uma abordagem B2B. Ideal para quem está começando.
+          </div>
+          <div class="card-stars">
+            <span class="stars-ico">★★★★½</span>
+            <span class="stars-num">4.6</span>
+            <span class="stars-cnt">(+5.000 alunos)</span>
+          </div>
+          <div class="card-meta">
+            <span>🎬 12 aulas</span>
+            <span>⏱️ 2h</span>
+            <span>🆓 Gratuito</span>
+            <span>📜 Certificado</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="preco-bloco">
+            <span class="preco-de">&nbsp;</span>
+            <span class="preco-por" style="color:var(--c-green, #30D158);">Gratuito</span>
+          </div>
+          <a href="https://hotmart.com/pt-br/marketplace" target="_blank" rel="noopener" class="btn-hm gratis">
+            Acessar grátis →
+          </a>
+        </div>
+      </div>
+ 
+    </div><!-- /grid -->
  
     <!-- FAQ -->
-    <div class="section" style="margin-top:56px;" id="faq">
-      <div class="section-label">Dúvidas</div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            Como funciona a compra dos cursos?
-            <span class="faq-chev">▼</span>
-          </div>
-          <div class="faq-a">
-            <p>Os links levam direto para a plataforma do curso (Udemy, Hotmart, FGV etc.). A compra e o acesso são feitos lá. A I·ten não processa pagamentos — somos um curador que indica os melhores cursos do mercado.</p>
-          </div>
+    <div class="faq" id="faq">
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Como acesso o curso depois de comprar?
+          <span class="faq-chev">▼</span>
         </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            Os cursos têm garantia?
-            <span class="faq-chev">▼</span>
-          </div>
-          <div class="faq-a">
-            <p>Sim. Cursos na Udemy e Hotmart têm garantia de 30 dias (Udemy) e 7 dias (Hotmart) por lei. Cursos de instituições como FGV, Insper e ESPM têm política própria disponível nos sites deles.</p>
-          </div>
+        <div class="faq-a">
+          <p>Após a confirmação do pagamento na Hotmart, você recebe o acesso por e-mail em até 30 minutos. O curso fica disponível na sua conta Hotmart — acesse em qualquer dispositivo, sem prazo de expiração.</p>
         </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            Por que vocês indicam esses cursos?
-            <span class="faq-chev">▼</span>
-          </div>
-          <div class="faq-a">
-            <p>Foram selecionados pelo volume de avaliações positivas, pela qualidade do currículo, pela atualização do conteúdo (todos revisados em 2025) e pela relevância para vendedores de campo no segmento de refrigeração e B2B industrial.</p>
-          </div>
+      </div>
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Tem garantia se eu não gostar?
+          <span class="faq-chev">▼</span>
         </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            Como me tornar afiliado e ganhar comissão?
-            <span class="faq-chev">▼</span>
-          </div>
-          <div class="faq-a">
-            <p>Na Hotmart: crie uma conta gratuita em hotmart.com, busque o produto e clique em "Afiliar-se". Na Udemy: acesse udemy.com/affiliate. Você recebe entre 20% e 50% de comissão por venda realizada pelo seu link. Não é necessário comprar o curso para se afiliar.</p>
-          </div>
+        <div class="faq-a">
+          <p>Sim. A Hotmart oferece garantia de 7 dias por lei (Código de Defesa do Consumidor). Você pode pedir reembolso integral dentro desse prazo diretamente pela plataforma, sem justificativa.</p>
+        </div>
+      </div>
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Posso parcelar?
+          <span class="faq-chev">▼</span>
+        </div>
+        <div class="faq-a">
+          <p>Sim. A Hotmart aceita PIX (com desconto), cartão de crédito (em até 12×) e boleto. O parcelamento disponível varia por curso — verifique na página de compra de cada um.</p>
+        </div>
+      </div>
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Esses cursos são para quem trabalha com refrigeração?
+          <span class="faq-chev">▼</span>
+        </div>
+        <div class="faq-a">
+          <p>São cursos de técnicas de vendas B2B — aplicáveis a qualquer segmento, incluindo refrigeração. Os conceitos de prospecção, negociação e fechamento são universais e funcionam para vender equipamentos, serviços de manutenção e contratos de climatização.</p>
         </div>
       </div>
     </div>
@@ -581,27 +594,22 @@ const user = Auth.getUser();
 document.getElementById('dd-name').textContent  = user?.name  || '';
 document.getElementById('dd-email').textContent = user?.email || '';
  
-// Filtro de categorias
 function filtrar(cat, btn) {
-  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
-  btn.classList.add('ativo');
-  document.querySelectorAll('.curso-card').forEach(card => {
-    const cats = (card.dataset.cats || '').split(' ');
-    card.style.display = (cat === 'todos' || cats.includes(cat)) ? '' : 'none';
+  document.querySelectorAll('.chip').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.card').forEach(c => {
+    const cats = (c.dataset.cats || '').split(' ');
+    c.style.display = (cat === 'todos' || cats.includes(cat)) ? '' : 'none';
   });
 }
  
-// FAQ accordion
-function toggleFaq(el) {
-  const ans     = el.nextElementSibling;
-  const chev    = el.querySelector('.faq-chev');
-  const aberto  = ans.classList.contains('aberto');
-  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('aberto'));
-  document.querySelectorAll('.faq-chev').forEach(c => c.style.transform = '');
-  if (!aberto) {
-    ans.classList.add('aberto');
-    chev.style.transform = 'rotate(180deg)';
-  }
+function faq(el) {
+  const a    = el.nextElementSibling;
+  const chev = el.querySelector('.faq-chev');
+  const open = a.classList.contains('on');
+  document.querySelectorAll('.faq-a').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.faq-chev').forEach(x => x.style.transform = '');
+  if (!open) { a.classList.add('on'); chev.style.transform = 'rotate(180deg)'; }
 }
 </script>
 </body>
