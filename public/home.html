@@ -52,14 +52,38 @@
       color: var(--c-text-3); margin-bottom: 20px;
     }
  
-    .tech-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-    .tech-tag {
-      background: var(--c-bg-card); border: 1px solid var(--c-border);
-      border-radius: var(--c-radius); padding: 14px 16px;
-      display: flex; flex-direction: column; gap: 4px;
+    .como-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--c-border);
+      border: 1px solid var(--c-border);
+      border-radius: var(--c-radius-lg);
+      overflow: hidden;
     }
-    .tech-tag-name { font-size: 0.85rem; font-weight: 700; color: var(--c-text); }
-    .tech-tag-desc { font-size: 0.76rem; color: var(--c-text-3); }
+    .como-card {
+      background: var(--c-bg-card);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .como-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .como-titulo {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--c-text);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+    .como-desc {
+      font-size: 0.83rem;
+      color: var(--c-text-2);
+      line-height: 1.65;
+    }
  
     .quicknav { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
     .quicknav-item {
@@ -137,34 +161,72 @@
       </div>
     </div>
  
-    <!-- STACK TÉCNICA -->
+    <!-- COMO FUNCIONA -->
     <div class="section">
-      <div class="section-label">Stack técnica</div>
-      <div class="tech-row">
-        <div class="tech-tag">
-          <span class="tech-tag-name">Node.js 20</span>
-          <span class="tech-tag-desc">Runtime · backend</span>
+      <div class="section-label">Como funciona</div>
+      <div class="como-grid">
+ 
+        <div class="como-card">
+          <div class="como-icon">🏢</div>
+          <div class="como-titulo">Base validada por CNPJ e CNAE</div>
+          <div class="como-desc">
+            Cada empresa é identificada pelo CNPJ e classificada pelo seu
+            CNAE — Classificação Nacional de Atividades Econômicas registrado
+            na Receita Federal. O grupo de cada empresa reflete sua atividade
+            econômica real, não apenas o nome fantasia.
+          </div>
         </div>
-        <div class="tech-tag">
-          <span class="tech-tag-name">Express 4</span>
-          <span class="tech-tag-desc">API REST</span>
+ 
+        <div class="como-card">
+          <div class="como-icon">🗂️</div>
+          <div class="como-titulo">12 segmentos com dependência de frio</div>
+          <div class="como-desc">
+            Supermercados, padarias, farmácias, clínicas, hotéis, frigoríficos,
+            indústria alimentícia e mais — todos os segmentos que dependem
+            diretamente de refrigeração comercial para operar.
+          </div>
         </div>
-        <div class="tech-tag">
-          <span class="tech-tag-name">SQLite 3</span>
-          <span class="tech-tag-desc">Banco de dados</span>
+ 
+        <div class="como-card">
+          <div class="como-icon">📍</div>
+          <div class="como-titulo">Navegação por município e segmento</div>
+          <div class="como-desc">
+            Selecione qualquer município da Bahia, escolha o segmento de
+            interesse e acesse a lista de empresas com CNPJ, razão social,
+            telefone e e-mail — prontos para contato imediato.
+          </div>
         </div>
-        <div class="tech-tag">
-          <span class="tech-tag-name">JWT HS256</span>
-          <span class="tech-tag-desc">Autenticação segura</span>
+ 
+        <div class="como-card">
+          <div class="como-icon">💼</div>
+          <div class="como-titulo">Carteira exclusiva por vendedor</div>
+          <div class="como-desc">
+            Ao adicionar uma empresa à carteira, ela fica invisível para os
+            demais vendedores — eliminando conflito de abordagem e garantindo
+            que cada oportunidade pertence a quem a prospectou.
+          </div>
         </div>
-        <div class="tech-tag">
-          <span class="tech-tag-name">bcrypt · salt 10</span>
-          <span class="tech-tag-desc">Hash de senhas</span>
+ 
+        <div class="como-card">
+          <div class="como-icon">📊</div>
+          <div class="como-titulo">Pipeline de prospecção em 4 estágios</div>
+          <div class="como-desc">
+            Acompanhe cada oportunidade em: Prospectar, Contatado, Cliente
+            ou Perdido. Registre notas por empresa e mantenha o histórico
+            de cada abordagem atualizado.
+          </div>
         </div>
-        <div class="tech-tag">
-          <span class="tech-tag-name">HTML · CSS · JS</span>
-          <span class="tech-tag-desc">Frontend puro</span>
+ 
+        <div class="como-card">
+          <div class="como-icon">🔄</div>
+          <div class="como-titulo">Base expansível e atualizada</div>
+          <div class="como-desc">
+            Novas empresas podem ser adicionadas ao banco a qualquer momento.
+            Ao reiniciar o sistema, os dados são reimportados automaticamente —
+            sem necessidade de alterar nenhuma linha de código.
+          </div>
         </div>
+ 
       </div>
     </div>
  
