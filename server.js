@@ -32,7 +32,7 @@ app.use('/api/wallet',    walletRoutes);
 app.use('/api/reports',   reportsRoutes);
  
 // ── PÁGINAS HTML ──────────────────────────────────────────────────────────────
-const pages = ['/', '/home', '/search', '/wallet', '/reports', '/admin'];
+const pages = ['/', '/home', '/search', '/wallet', '/academy', '/reports', '/admin'];
 pages.forEach(pg => {
   app.get(pg, (req, res) => {
     const file = pg === '/' ? 'login.html' : `${pg.slice(1)}.html`;
