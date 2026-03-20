@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>I·ten — Criar conta</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--ink:#080E1A;--ink2:#0D1525;--ice:#5AC8FA;--blue:#0A84FF;--white:#fff;--muted:rgba(255,255,255,.45);--faint:rgba(255,255,255,.07);--bdr:rgba(255,255,255,.08);}
+    body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:36px 36px;pointer-events:none;}
+    body::after{content:'';position:fixed;top:-100px;left:50%;transform:translateX(-50%);width:700px;height:600px;background:radial-gradient(ellipse,rgba(10,132,255,.14) 0%,transparent 65%);pointer-events:none;}
+ 
+    .back{position:fixed;top:20px;left:24px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.85rem;font-weight:500;text-decoration:none;transition:color .13s;z-index:10;}
+    .back:hover{color:var(--white);text-decoration:none;}
+    .back svg{transition:transform .13s;}
+    .back:hover svg{transform:translateX(-2px);}
+ 
+    .box{background:var(--ink2);border:1px solid var(--bdr);border-radius:20px;padding:48px;width:100%;max-width:440px;position:relative;z-index:1;}
+    .logo{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--white);margin-bottom:28px;text-decoration:none;}
+    .logo:hover{text-decoration:none;color:var(--white);}
+    h1{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.03em;color:var(--white);margin-bottom:6px;}
+    .sub{font-size:.85rem;color:var(--muted);margin-bottom:32px;}
+    .f{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
+    .f label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.05em;text-transform:uppercase;}
+    .f input{background:rgba(255,255,255,.05);border:1.5px solid var(--bdr);border-radius:10px;padding:12px 14px;font-size:.9rem;font-family:inherit;color:var(--white);outline:none;transition:border-color .15s;}
+    .f input::placeholder{color:rgba(255,255,255,.18);}
+    .f input:focus{border-color:var(--blue);}
+    .cl{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;}
+    .cl input[type=checkbox]{margin-top:3px;flex-shrink:0;accent-color:var(--blue);cursor:pointer;}
+    .cl label{font-size:.79rem;color:var(--muted);cursor:pointer;line-height:1.55;}
+    .cl a{color:var(--ice);text-decoration:none;}
+    .cl a:hover{text-decoration:underline;}
+    .msg{min-height:18px;font-size:.8rem;margin-bottom:10px;}
+    .msg.err{color:#FF453A;}
+    .msg.ok{color:var(--ice);}
+    .btn{width:100%;background:var(--blue);color:var(--white);font-size:.95rem;font-weight:700;padding:14px;border-radius:11px;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .13s,transform .12s;}
+    .btn:hover:not(:disabled){background:#0070d8;transform:translateY(-1px);}
+    .btn:disabled{opacity:.6;cursor:default;}
+    .ft{text-align:center;font-size:.82rem;color:var(--muted);margin-top:20px;}
+    .ft a{color:var(--ice);font-weight:600;text-decoration:none;}
+    .ft a:hover{text-decoration:underline;}
+    .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:var(--white);border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0;}
+    @keyframes rot{to{transform:rotate(360deg);}}
+  </style>
+</head>
+<body>
+ 
+<a href="/" class="back">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4L6 8l4 4"/></svg>
+  Voltar
+</a>
+ 
+<div class="box">
+  <a href="/" class="logo">
+    <img src="/assets/logo.svg" width="26" height="26" alt="I·ten">I·ten
+  </a>
+  <h1>Criar conta</h1>
+  <p class="sub">Preencha os dados abaixo para começar a usar a plataforma.</p>
+ 
+  <div class="f"><label>Nome completo</label><input type="text" id="r-nome" placeholder="Seu nome" autocomplete="name"></div>
+  <div class="f"><label>E-mail</label><input type="email" id="r-email" placeholder="seu@email.com" autocomplete="email"></div>
+  <div class="f"><label>Senha</label><input type="password" id="r-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password"></div>
+  <div class="f"><label>Confirmar senha</label><input type="password" id="r-pass2" placeholder="Repita a senha"></div>
+ 
+  <div class="cl">
+    <input type="checkbox" id="r-termos">
+    <label for="r-termos">
+      Li e aceito os <a href="/termos" target="_blank">Termos de Uso</a>
+      e a <a href="/privacidade" target="_blank">Política de Privacidade</a>.
+    </label>
+  </div>
+ 
+  <div class="msg" id="r-msg"></div>
+  <button class="btn" id="r-btn" onclick="doRegister()">Criar minha conta</button>
+ 
+  <div class="ft">Já tem conta? <a href="/">Entrar</a></div>
+</div>
+ 
+<script>
+try{ if(localStorage.getItem('ceres_token')) window.location.href='/home'; }catch(e){}
+ 
+async function doRegister(){
+  const nome  = document.getElementById('r-nome').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pass  = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+  const termos= document.getElementById('r-termos').checked;
+  const msg   = document.getElementById('r-msg');
+  const btn   = document.getElementById('r-btn');
+ 
+  msg.className='msg';msg.textContent='';
+  if(!nome||!email||!pass||!pass2){msg.className='msg err';msg.textContent='Preencha todos os campos.';return;}
+  if(pass.length<8){msg.className='msg err';msg.textContent='Senha deve ter pelo menos 8 caracteres.';return;}
+  if(pass!==pass2){msg.className='msg err';msg.textContent='As senhas não coincidem.';return;}
+  if(!termos){msg.className='msg err';msg.textContent='Você precisa aceitar os termos para continuar.';return;}
+ 
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Criando conta…';
+ 
+  try{
+    const r=await fetch('/api/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nome,email,password:pass})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Erro ao criar conta.');
+    localStorage.setItem('ceres_token',d.token);
+    localStorage.setItem('ceres_user',JSON.stringify(d.user));
+    msg.className='msg ok';msg.textContent='Conta criada! Redirecionando…';
+    setTimeout(()=>window.location.href='/home',800);
+  }catch(err){
+    msg.className='msg err';msg.textContent=err.message;
+    btn.disabled=false;btn.innerHTML='Criar minha conta';
+  }
+}
+ 
+document.getElementById('r-pass2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+</script>
+</body>
+</html>

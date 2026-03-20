@@ -3,117 +3,515 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ceres — Entrar</title>
+  <title>I·ten — Prospecção B2B para Refrigeração</title>
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/ceres.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-    .stars {
-      position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:   #080E1A;
+      --ink2:  #0D1525;
+      --ink3:  #152035;
+      --ice:   #5AC8FA;
+      --blue:  #0A84FF;
+      --white: #FFFFFF;
+      --muted: rgba(255,255,255,0.45);
+      --faint: rgba(255,255,255,0.07);
+      --bdr:   rgba(255,255,255,0.08);
     }
-    .star {
-      position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%;
-      animation: twinkle var(--d) ease-in-out infinite var(--delay);
-      opacity: 0;
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--white); overflow-x: hidden; line-height: 1.6; }
+ 
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 62px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(8,14,26,.88); backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--bdr);
     }
-    @keyframes twinkle {
-      0%,100% { opacity: 0; }
-      50% { opacity: var(--op); }
+    .brand {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800;
+      color: var(--white); letter-spacing: -.02em;
     }
-    .auth-bg { position: relative; }
-    .auth-bg > * { position: relative; z-index: 1; }
+    .brand:hover { text-decoration: none; color: var(--white); }
+    .nav-r { display: flex; align-items: center; gap: 6px; }
+    .nl { color: var(--muted); font-size: .875rem; font-weight: 500; padding: 7px 13px; border-radius: 8px; text-decoration: none; transition: color .13s, background .13s; }
+    .nl:hover { color: var(--white); background: var(--faint); text-decoration: none; }
+    .btn-in {
+      background: transparent; color: var(--white); border: 1.5px solid var(--bdr);
+      font-size: .875rem; font-weight: 600; padding: 7px 18px; border-radius: 9px;
+      cursor: pointer; font-family: inherit; transition: border-color .13s, background .13s;
+    }
+    .btn-in:hover { border-color: rgba(255,255,255,.25); background: var(--faint); }
+    .btn-up {
+      background: var(--blue); color: var(--white); text-decoration: none;
+      font-size: .875rem; font-weight: 700; padding: 8px 20px; border-radius: 9px;
+      transition: background .13s, transform .12s, box-shadow .15s; display: inline-block;
+    }
+    .btn-up:hover { background: #0070d8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,132,255,.4); text-decoration: none; color: var(--white); }
+ 
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 140px 32px 100px; position: relative; overflow: hidden;
+    }
+    .hero-dots {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,.055) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+    .glow1 {
+      position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 700px; pointer-events: none;
+      background: radial-gradient(ellipse, rgba(10,132,255,.17) 0%, rgba(90,200,250,.04) 45%, transparent 70%);
+    }
+    .glow2 {
+      position: absolute; bottom: -80px; right: -60px; pointer-events: none;
+      width: 460px; height: 460px;
+      background: radial-gradient(circle, rgba(90,200,250,.06) 0%, transparent 65%);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(90,200,250,.1); border: 1px solid rgba(90,200,250,.22);
+      color: var(--ice); font-size: .7rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; padding: 5px 16px; border-radius: 100px;
+      margin-bottom: 32px; animation: up .6s ease both;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ice); }
+    .h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 7.5vw, 5.4rem); font-weight: 800;
+      letter-spacing: -.045em; line-height: .98; color: var(--white);
+      max-width: 840px; margin-bottom: 24px;
+      animation: up .6s .1s ease both;
+    }
+    .h1 .hi { color: var(--ice); }
+    .sub {
+      font-size: clamp(.9rem, 2vw, 1.08rem); color: var(--muted);
+      max-width: 500px; line-height: 1.8; margin-bottom: 48px;
+      animation: up .6s .2s ease both;
+    }
+    .ctas { display: flex; gap: 13px; flex-wrap: wrap; justify-content: center; margin-bottom: 72px; animation: up .6s .3s ease both; }
+    .c-main {
+      background: var(--blue); color: var(--white);
+      font-size: .97rem; font-weight: 700; padding: 14px 34px; border-radius: 12px;
+      text-decoration: none; border: none; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: background .15s, transform .15s, box-shadow .15s;
+    }
+    .c-main:hover { background: #0070d8; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(10,132,255,.45); text-decoration: none; color: var(--white); }
+    .c-sec {
+      background: var(--faint); color: rgba(255,255,255,.8);
+      border: 1px solid var(--bdr); font-size: .97rem; font-weight: 500;
+      padding: 14px 34px; border-radius: 12px; text-decoration: none;
+      transition: all .14s;
+    }
+    .c-sec:hover { background: rgba(255,255,255,.12); color: var(--white); text-decoration: none; }
+    .stats {
+      display: flex; gap: 0; border: 1px solid var(--bdr); border-radius: 16px;
+      overflow: hidden; max-width: 520px; width: 100%;
+      animation: up .6s .4s ease both;
+    }
+    .stat { flex: 1; padding: 18px 24px; text-align: center; border-right: 1px solid var(--bdr); }
+    .stat:last-child { border-right: none; }
+    .sn { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--white); letter-spacing: -.03em; }
+    .sl { font-size: .72rem; color: var(--muted); font-weight: 500; margin-top: 3px; }
+ 
+    /* SEÇÕES */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+    @media(max-width:600px){ .wrap { padding: 0 20px; } }
+    .tag { font-size: .68rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ice); display: block; margin-bottom: 14px; }
+    .sh { font-family: 'Syne', sans-serif; font-size: clamp(1.85rem, 4vw, 2.85rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.1; color: var(--white); max-width: 620px; margin-bottom: 16px; }
+    .sp { font-size: .97rem; color: var(--muted); max-width: 500px; line-height: 1.75; margin-bottom: 56px; }
+ 
+    /* SOBRE */
+    #sobre { padding: 120px 0; }
+    .sobre-g { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    @media(max-width:820px){ .sobre-g { grid-template-columns: 1fr; gap: 48px; } }
+    .ilus {
+      background: var(--ink2); border: 1px solid var(--bdr); border-radius: 24px;
+      padding: 40px 32px; min-height: 380px; display: flex; align-items: center;
+      justify-content: center; position: relative; overflow: hidden;
+    }
+    .ilus::after {
+      content: ''; position: absolute; bottom: -80px; right: -80px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(10,132,255,.14) 0%, transparent 65%);
+    }
+    .pontos { display: flex; flex-direction: column; gap: 24px; }
+    .pt { display: flex; gap: 16px; align-items: flex-start; }
+    .pt-i {
+      width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0;
+      background: rgba(10,132,255,.1); border: 1px solid rgba(10,132,255,.2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+    }
+    .pt-h { font-size: .93rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .pt-p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+ 
+    /* COMO */
+    #como { padding: 120px 0; background: var(--ink2); border-top: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr); }
+    .passos { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; border: 1px solid var(--bdr); border-radius: 20px; overflow: hidden; background: var(--bdr); }
+    @media(max-width:780px){ .passos { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:480px){ .passos { grid-template-columns: 1fr; } }
+    .passo { background: var(--ink2); padding: 40px 30px; position: relative; overflow: hidden; transition: background .18s; }
+    .passo:hover { background: var(--ink3); }
+    .passo::before { content: attr(data-n); position: absolute; top: -14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 5.5rem; font-weight: 800; color: rgba(255,255,255,.03); line-height: 1; pointer-events: none; }
+    .p-ico { font-size: 1.7rem; margin-bottom: 18px; display: block; }
+    .p-h { font-size: .95rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .p-p { font-size: .81rem; color: var(--muted); line-height: 1.65; }
+ 
+    /* SEGMENTOS */
+    #seg { padding: 120px 0; }
+    .sg { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px,1fr)); gap: 10px; }
+    .sc {
+      background: var(--ink2); border: 1px solid var(--bdr); border-radius: 13px;
+      padding: 20px 16px; display: flex; flex-direction: column; gap: 8px;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+    .sc:hover { border-color: rgba(90,200,250,.28); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+    .si { font-size: 1.4rem; }
+    .sn2 { font-size: .79rem; font-weight: 700; color: var(--white); line-height: 1.3; }
+    .sq { font-size: .69rem; color: var(--muted); font-weight: 500; }
+ 
+    /* CTA */
+    #cta { padding: 120px 40px; text-align: center; position: relative; overflow: hidden; background: var(--ink2); border-top: 1px solid var(--bdr); }
+    #cta::before { content: ''; position: absolute; top: -160px; left: 50%; transform: translateX(-50%); width: 700px; height: 500px; background: radial-gradient(ellipse, rgba(10,132,255,.15) 0%, transparent 65%); pointer-events: none; }
+    .cta-h { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; letter-spacing: -.04em; color: var(--white); margin-bottom: 16px; position: relative; }
+    .cta-p { font-size: 1rem; color: var(--muted); margin-bottom: 44px; position: relative; }
+ 
+    /* FOOTER */
+    footer { background: var(--ink); border-top: 1px solid var(--bdr); padding: 56px 40px 40px; }
+    .ft { max-width: 1100px; margin: 0 auto; }
+    .ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; margin-bottom: 40px; }
+    .fb { display: flex; flex-direction: column; gap: 10px; }
+    .fb-brand { display: flex; align-items: center; gap: 8px; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--white); text-decoration: none; }
+    .fb-brand:hover { text-decoration: none; color: var(--white); }
+    .fb-p { font-size: .79rem; color: var(--muted); max-width: 230px; line-height: 1.6; }
+    .fc { display: flex; flex-direction: column; gap: 10px; }
+    .fc-h { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 4px; }
+    .fc a { font-size: .82rem; color: var(--muted); text-decoration: none; transition: color .13s; }
+    .fc a:hover { color: var(--white); }
+    .ft-bot { border-top: 1px solid var(--bdr); padding-top: 28px; font-size: .74rem; color: rgba(255,255,255,.22); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+ 
+    /* MODAIS */
+    .ov { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(4,8,18,.8); backdrop-filter: blur(18px); align-items: center; justify-content: center; padding: 24px; }
+    .ov.on { display: flex; animation: fi .2s ease; }
+    .mb { background: var(--ink2); border: 1px solid var(--bdr); border-radius: 20px; padding: 44px; width: 100%; max-width: 420px; box-shadow: 0 40px 80px rgba(0,0,0,.55); position: relative; }
+    .mx { position: absolute; top: 16px; right: 16px; background: var(--faint); border: none; color: var(--muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: .95rem; display: flex; align-items: center; justify-content: center; transition: background .13s, color .13s; }
+    .mx:hover { background: rgba(255,255,255,.1); color: var(--white); }
+    .mh { font-family: 'Syne', sans-serif; font-size: 1.45rem; font-weight: 800; letter-spacing: -.025em; color: var(--white); margin-bottom: 6px; }
+    .mp { font-size: .84rem; color: var(--muted); margin-bottom: 30px; }
+    .f { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+    .f label { font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.4); letter-spacing: .05em; text-transform: uppercase; }
+    .f input { background: rgba(255,255,255,.05); border: 1.5px solid var(--bdr); border-radius: 10px; padding: 12px 14px; font-size: .9rem; font-family: inherit; color: var(--white); outline: none; transition: border-color .15s; }
+    .f input::placeholder { color: rgba(255,255,255,.18); }
+    .f input:focus { border-color: var(--blue); }
+    .msg { min-height: 18px; font-size: .79rem; margin-bottom: 10px; }
+    .msg.err { color: #FF453A; }
+    .msg.ok  { color: var(--ice); }
+    .bsub { width: 100%; background: var(--blue); color: var(--white); font-size: .93rem; font-weight: 700; padding: 13px; border-radius: 11px; border: none; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .13s, transform .12s; }
+    .bsub:hover:not(:disabled) { background: #0070d8; transform: translateY(-1px); }
+    .bsub:disabled { opacity: .6; cursor: default; }
+    .mft { text-align: center; font-size: .81rem; color: var(--muted); margin-top: 20px; }
+    .mft a { color: var(--ice); font-weight: 600; text-decoration: none; }
+    .mft a:hover { text-decoration: underline; }
+    .cl { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 18px; }
+    .cl input[type=checkbox] { margin-top: 3px; flex-shrink: 0; accent-color: var(--blue); cursor: pointer; }
+    .cl label { font-size: .78rem; color: var(--muted); cursor: pointer; line-height: 1.5; }
+    .cl a { color: var(--ice); }
+    .spin { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.3); border-top-color: var(--white); border-radius: 50%; animation: rot .7s linear infinite; flex-shrink: 0; }
+ 
+    @keyframes up  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    @keyframes fi  { from{opacity:0} to{opacity:1} }
+    @keyframes rot { to{transform:rotate(360deg)} }
+    .rv { opacity:0; transform:translateY(22px); transition:opacity .65s ease,transform .65s ease; }
+    .rv.vis { opacity:1; transform:none; }
+    .rv.d1 { transition-delay:.1s; }
+    .rv.d2 { transition-delay:.2s; }
+    .rv.d3 { transition-delay:.3s; }
   </style>
 </head>
 <body>
-<div class="auth-bg">
-  <div class="stars" id="stars"></div>
  
-  <div class="auth-card">
-    <div class="auth-logo">
-      <img src="/assets/logo.svg" alt="Ceres" width="64" height="64">
-      <h1>Ceres</h1>
-      <p>Plataforma de Prospecção Comercial<br>Refrigeração & Engenharia</p>
-    </div>
+<!-- NAV -->
+<nav>
+  <a href="/" class="brand">
+    <img src="/assets/logo.svg" width="26" height="26" alt="I·ten">I·ten
+  </a>
+  <div class="nav-r">
+    <a href="#sobre"   class="nl">Sobre</a>
+    <a href="#como"    class="nl">Como funciona</a>
+    <a href="#seg"     class="nl">Segmentos</a>
+    <button class="btn-in" onclick="openL()">Entrar</button>
+    <a href="/register" class="btn-up">Criar conta</a>
+  </div>
+</nav>
  
-    <form id="login-form" novalidate>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div class="form-group">
-          <label class="form-label" for="email">E-mail</label>
-          <input class="form-input" type="email" id="email" name="email"
-                 placeholder="seu@email.com.br" autocomplete="email" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password">Senha</label>
-          <input class="form-input" type="password" id="password" name="password"
-                 placeholder="••••••••" autocomplete="current-password" required>
-        </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="glow1"></div>
+  <div class="glow2"></div>
+ 
+  <div class="pill"><span class="dot"></span>Prospecção B2B · Bahia</div>
+ 
+  <h1 class="h1">
+    Cada empresa que<br>precisa de <span class="hi">frio</span>,<br>no mapa certo.
+  </h1>
+ 
+  <p class="sub">
+    1.692 empresas baianas classificadas por CNPJ e CNAE, em 12 segmentos.
+    Prospecte com precisão, sem conflito de território.
+  </p>
+ 
+  <div class="ctas">
+    <a href="/register" class="c-main">
+      Criar conta grátis
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+    <a href="#sobre" class="c-sec">Saber mais</a>
+  </div>
+ 
+  <div class="stats">
+    <div class="stat"><div class="sn">1.692</div><div class="sl">Empresas</div></div>
+    <div class="stat"><div class="sn">300</div><div class="sl">Municípios</div></div>
+    <div class="stat"><div class="sn">12</div><div class="sl">Segmentos</div></div>
+  </div>
+</section>
+ 
+<!-- SOBRE -->
+<section id="sobre">
+  <div class="wrap">
+    <div class="sobre-g">
+      <!-- Ilustração dashboard SVG -->
+      <div class="ilus rv">
+        <svg style="width:100%;max-width:310px;position:relative;z-index:1;" viewBox="0 0 310 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="310" height="270" rx="12" fill="#0A1628"/>
+          <rect width="310" height="36" rx="12" fill="#0D1F3C"/>
+          <rect y="24" width="310" height="12" fill="#0D1F3C"/>
+          <circle cx="15" cy="18" r="4.5" fill="#FF453A" opacity=".75"/>
+          <circle cx="28" cy="18" r="4.5" fill="#FF9F0A" opacity=".75"/>
+          <circle cx="41" cy="18" r="4.5" fill="#30D158" opacity=".75"/>
+          <text x="58" y="22" font-size="8" fill="rgba(255,255,255,.25)" font-family="monospace">I·ten — Pesquisa</text>
+          <!-- Sidebar -->
+          <rect x="0" y="36" width="68" height="234" fill="#0B1A30"/>
+          <rect x="8" y="50"  width="52" height="7" rx="3.5" fill="rgba(10,132,255,.55)"/>
+          <rect x="8" y="65"  width="38" height="5" rx="2.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="8" y="78"  width="44" height="5" rx="2.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="8" y="91"  width="36" height="5" rx="2.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="8" y="104" width="42" height="5" rx="2.5" fill="rgba(255,255,255,.1)"/>
+          <!-- Área principal -->
+          <rect x="78" y="48"  width="222" height="12" rx="4" fill="rgba(255,255,255,.07)"/>
+          <!-- Cards segmentos -->
+          <rect x="78"  y="72" width="66" height="46" rx="6" fill="#102040"/>
+          <rect x="152" y="72" width="66" height="46" rx="6" fill="#102040"/>
+          <rect x="226" y="72" width="66" height="46" rx="6" fill="rgba(10,132,255,.18)"/>
+          <rect x="82"  y="78" width="26" height="3.5" rx="1.75" fill="rgba(255,255,255,.3)"/>
+          <rect x="82"  y="85" width="38" height="3" rx="1.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="82"  y="91" width="30" height="3" rx="1.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="156" y="78" width="26" height="3.5" rx="1.75" fill="rgba(255,255,255,.3)"/>
+          <rect x="156" y="85" width="38" height="3" rx="1.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="156" y="91" width="30" height="3" rx="1.5" fill="rgba(255,255,255,.1)"/>
+          <rect x="230" y="78" width="26" height="3.5" rx="1.75" fill="rgba(90,200,250,.9)"/>
+          <rect x="230" y="85" width="38" height="3" rx="1.5" fill="rgba(255,255,255,.2)"/>
+          <rect x="230" y="91" width="30" height="3" rx="1.5" fill="rgba(255,255,255,.2)"/>
+          <!-- Divisor -->
+          <rect x="78" y="130" width="220" height="1" fill="rgba(255,255,255,.06)"/>
+          <!-- Linhas de empresa -->
+          <rect x="78" y="143" width="100" height="4.5" rx="2.25" fill="rgba(255,255,255,.22)"/>
+          <rect x="78" y="152" width="68"  height="3.5" rx="1.75" fill="rgba(255,255,255,.08)"/>
+          <rect x="240" y="141" width="54" height="16" rx="5" fill="rgba(10,132,255,.28)"/>
+          <rect x="78" y="172" width="100" height="4.5" rx="2.25" fill="rgba(255,255,255,.22)"/>
+          <rect x="78" y="181" width="68"  height="3.5" rx="1.75" fill="rgba(255,255,255,.08)"/>
+          <rect x="240" y="170" width="54" height="16" rx="5" fill="rgba(255,255,255,.07)"/>
+          <rect x="78" y="201" width="100" height="4.5" rx="2.25" fill="rgba(255,255,255,.22)"/>
+          <rect x="78" y="210" width="68"  height="3.5" rx="1.75" fill="rgba(255,255,255,.08)"/>
+          <rect x="240" y="199" width="54" height="16" rx="5" fill="rgba(255,255,255,.07)"/>
+          <!-- Rodapé info -->
+          <rect x="78" y="228" width="220" height="1" fill="rgba(255,255,255,.05)"/>
+          <text x="78" y="246" font-size="7.5" fill="rgba(90,200,250,.55)" font-family="monospace">CNPJ: 00.000.000/0001-00  ·  CNAE: 4711-3</text>
+          <text x="78" y="258" font-size="7.5" fill="rgba(255,255,255,.18)" font-family="monospace">Grupo: SUPERMERCADOS E MERCEARIAS</text>
+        </svg>
       </div>
  
-      <div id="auth-error" style="margin-top:14px;"></div>
- 
-      <button class="btn btn-primary btn-full btn-lg" type="submit" id="submit-btn"
-              style="margin-top:20px;">
-        Entrar
-      </button>
-    </form>
- 
-    <div class="auth-divider"></div>
-    <div class="auth-footer">
-      <a href="/recover">Esqueci minha senha</a>
+      <div class="rv d1">
+        <span class="tag">Sobre a plataforma</span>
+        <h2 class="sh">Prospecção organizada para quem vende refrigeração.</h2>
+        <p class="sp">A I·ten centraliza as informações que a equipe comercial precisa para abordar as empresas certas, na cidade certa — sem cruzar com outro vendedor.</p>
+        <div class="pontos">
+          <div class="pt">
+            <div class="pt-i">🏢</div>
+            <div>
+              <div class="pt-h">CNPJ alinhado ao CNAE</div>
+              <div class="pt-p">Cada empresa classificada pela atividade econômica real. Você aborda quem de fato precisa de frio.</div>
+            </div>
+          </div>
+          <div class="pt">
+            <div class="pt-i">🗺️</div>
+            <div>
+              <div class="pt-h">300 municípios cobertos</div>
+              <div class="pt-p">Todo o estado da Bahia mapeado, com empresas por segmento em cada cidade.</div>
+            </div>
+          </div>
+          <div class="pt">
+            <div class="pt-i">🤝</div>
+            <div>
+              <div class="pt-h">Zero conflito de território</div>
+              <div class="pt-p">Empresa prospectada fica reservada ao vendedor. Sem sobreposição de abordagem na equipe.</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+ 
+<!-- COMO FUNCIONA -->
+<section id="como">
+  <div class="wrap">
+    <span class="tag rv">Como funciona</span>
+    <h2 class="sh rv d1">Do cadastro ao primeiro<br>contato em 4 passos.</h2>
+    <p class="sp rv d2">Simples, direto e sem curva de aprendizado.</p>
+    <div class="passos rv d3">
+      <div class="passo" data-n="01"><span class="p-ico">📝</span><div class="p-h">Crie sua conta</div><div class="p-p">Cadastro gratuito. Em segundos você acessa a plataforma com todos os dados disponíveis.</div></div>
+      <div class="passo" data-n="02"><span class="p-ico">📍</span><div class="p-h">Escolha o município</div><div class="p-p">Selecione qualquer cidade da Bahia e veja os 12 segmentos com dependência de frio.</div></div>
+      <div class="passo" data-n="03"><span class="p-ico">💼</span><div class="p-h">Monte sua carteira</div><div class="p-p">Adicione as empresas que deseja prospectar. Ficam reservadas exclusivamente para você.</div></div>
+      <div class="passo" data-n="04"><span class="p-ico">📞</span><div class="p-h">Entre em contato</div><div class="p-p">CNPJ, telefone e e-mail prontos. Registre o andamento no pipeline em 4 estágios.</div></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- SEGMENTOS -->
+<section id="seg">
+  <div class="wrap">
+    <span class="tag rv">Segmentos cobertos</span>
+    <h2 class="sh rv d1">12 grupos com dependência<br>direta de refrigeração.</h2>
+    <p class="sp rv d2">Classificados pelo CNAE — a atividade econômica real de cada empresa.</p>
+    <div class="sg rv d3">
+      <div class="sc"><div class="si">🛒</div><div class="sn2">Supermercados e Mercearias</div><div class="sq">520 empresas</div></div>
+      <div class="sc"><div class="si">🥐</div><div class="sn2">Padarias e Food Service</div><div class="sq">304 empresas</div></div>
+      <div class="sc"><div class="si">💊</div><div class="sn2">Farmácias e Drogarias</div><div class="sq">215 empresas</div></div>
+      <div class="sc"><div class="si">🏗️</div><div class="sn2">Construtoras e Obras</div><div class="sq">175 empresas</div></div>
+      <div class="sc"><div class="si">🔬</div><div class="sn2">Laboratórios e Clínicas</div><div class="sq">144 empresas</div></div>
+      <div class="sc"><div class="si">🏭</div><div class="sn2">Indústria e Atacado</div><div class="sq">102 empresas</div></div>
+      <div class="sc"><div class="si">🏨</div><div class="sn2">Hotéis e Pousadas</div><div class="sq">101 empresas</div></div>
+      <div class="sc"><div class="si">🎉</div><div class="sn2">Eventos e Buffet</div><div class="sq">43 empresas</div></div>
+      <div class="sc"><div class="si">📐</div><div class="sn2">Arquitetura e Engenharia</div><div class="sq">43 empresas</div></div>
+      <div class="sc"><div class="si">🥩</div><div class="sn2">Frigoríficos e Carnes</div><div class="sq">26 empresas</div></div>
+      <div class="sc"><div class="si">🌸</div><div class="sn2">Floriculturas</div><div class="sq">12 empresas</div></div>
+      <div class="sc"><div class="si">❄️</div><div class="sn2">Instalações Refrigeração</div><div class="sq">7 empresas</div></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- CTA -->
+<section id="cta">
+  <div class="pill" style="margin:0 auto 28px;"><span class="dot"></span>Comece agora</div>
+  <h2 class="cta-h rv">Pronto para prospectar<br>com dados reais?</h2>
+  <p class="cta-p rv d1">Crie sua conta e comece a usar hoje — gratuito.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;" class="rv d2">
+    <a href="/register" class="c-main">
+      Criar conta grátis
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+    <button onclick="openL()" style="background:var(--faint);color:rgba(255,255,255,.8);border:1px solid var(--bdr);font-size:.97rem;font-weight:500;padding:14px 34px;border-radius:12px;cursor:pointer;font-family:inherit;transition:all .14s;" onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.color='#fff'" onmouseout="this.style.background='var(--faint)';this.style.color='rgba(255,255,255,.8)'">
+      Já tenho conta
+    </button>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="ft">
+    <div class="ft-top">
+      <div class="fb">
+        <a href="/" class="fb-brand"><img src="/assets/logo.svg" width="20" height="20" alt="">I·ten</a>
+        <p class="fb-p">Plataforma de prospecção B2B para o mercado de refrigeração na Bahia.</p>
+      </div>
+      <div class="fc">
+        <span class="fc-h">Plataforma</span>
+        <a href="#sobre">Sobre</a>
+        <a href="#como">Como funciona</a>
+        <a href="#seg">Segmentos</a>
+      </div>
+      <div class="fc">
+        <span class="fc-h">Acesso</span>
+        <a href="/register">Criar conta</a>
+        <a href="#" onclick="openL();return false;">Entrar</a>
+        <a href="/recover">Recuperar senha</a>
+      </div>
+      <div class="fc">
+        <span class="fc-h">Legal</span>
+        <a href="/termos">Termos de Uso</a>
+        <a href="/privacidade">Política de Privacidade</a>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span>Elaborado e desenvolvido por <strong style="color:rgba(255,255,255,.38);">Matheus Augusto Roseira Santana</strong></span>
+      <span>Copyright &copy; 2026 I·ten. Todos os direitos reservados.</span>
+    </div>
+  </div>
+</footer>
+ 
+<!-- MODAL LOGIN -->
+<div class="ov" id="ov-l" onclick="if(event.target===this)closeL()">
+  <div class="mb">
+    <button class="mx" onclick="closeL()">✕</button>
+    <div class="mh">Entrar</div>
+    <div class="mp">Acesse sua conta para continuar.</div>
+    <div class="f"><label>E-mail</label><input type="email" id="le" placeholder="seu@email.com" autocomplete="email"></div>
+    <div class="f"><label>Senha</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
+    <div class="msg" id="lm"></div>
+    <button class="bsub" id="lb" onclick="doL()">Entrar</button>
+    <div class="mft">Não tem conta? <a href="/register">Criar agora</a> &nbsp;·&nbsp; <a href="/recover">Esqueci a senha</a></div>
   </div>
 </div>
  
 <script>
-  // Redireciona se já logado
-  const stored = localStorage.getItem('ceres_token');
-  if (stored) window.location.href = '/home';
+try{ if(localStorage.getItem('ceres_token')) window.location.href='/home'; }catch(e){}
  
-  // Stars background
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 120; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const sz = Math.random() < 0.15 ? 3 : 2;
-    s.style.cssText = `
-      left:${Math.random()*100}%; top:${Math.random()*100}%;
-      width:${sz}px; height:${sz}px;
-      --d:${2+Math.random()*4}s;
-      --delay:-${Math.random()*5}s;
-      --op:${0.3+Math.random()*0.7};
-    `;
-    container.appendChild(s);
+function openL(){ document.getElementById('ov-l').classList.add('on'); setTimeout(()=>document.getElementById('le').focus(),80); }
+function closeL(){ document.getElementById('ov-l').classList.remove('on'); document.getElementById('lm').textContent=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeL(); });
+document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter')doL(); });
+ 
+async function doL(){
+  const e2=document.getElementById('le').value.trim();
+  const p=document.getElementById('lp').value;
+  const m=document.getElementById('lm');
+  const b=document.getElementById('lb');
+  if(!e2||!p){m.className='msg err';m.textContent='Preencha todos os campos.';return;}
+  b.disabled=true; b.innerHTML='<div class="spin"></div> Entrando…'; m.textContent='';
+  try{
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e2,password:p})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Erro ao entrar.');
+    localStorage.setItem('ceres_token',d.token);
+    localStorage.setItem('ceres_user',JSON.stringify(d.user));
+    window.location.href='/home';
+  }catch(err){
+    m.className='msg err';m.textContent=err.message;
+    b.disabled=false;b.innerHTML='Entrar';
   }
+}
  
-  // Login
-  document.getElementById('login-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const errEl    = document.getElementById('auth-error');
-    const btn      = document.getElementById('submit-btn');
- 
-    errEl.textContent = '';
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner"></div> Entrando...';
- 
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erro ao entrar.');
- 
-      localStorage.setItem('ceres_token', data.token);
-      localStorage.setItem('ceres_user', JSON.stringify(data.user));
-      window.location.href = '/home';
-    } catch(err) {
-      errEl.textContent = err.message;
-      btn.disabled = false;
-      btn.innerHTML = 'Entrar';
-    }
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
   });
+});
+ 
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{if(en.isIntersecting)en.target.classList.add('vis');});
+},{threshold:0.1});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>

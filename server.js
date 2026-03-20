@@ -32,13 +32,15 @@ app.use('/api/wallet',    walletRoutes);
 app.use('/api/reports',   reportsRoutes);
  
 // ── PÁGINAS HTML ──────────────────────────────────────────────────────────────
-const pages = ['/', '/home', '/search', '/wallet', '/cursos', '/reports', '/admin'];
+const pages = ['/', '/home', '/search', '/wallet', '/cursos', '/reports', '/admin', '/termos', '/privacidade'];
 pages.forEach(pg => {
   app.get(pg, (req, res) => {
     const file = pg === '/' ? 'login.html' : `${pg.slice(1)}.html`;
     res.sendFile(path.join(__dirname, 'public', file));
   });
 });
+app.get('/register', (req, res) =>
+  res.sendFile(path.join(__dirname, 'public', 'register.html')));
 app.get('/recover', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'recover.html')));
  
