@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/ceres.css">
   <style>
     .page-head {
-      padding: 56px 0 44px;
+      padding: 56px 0 40px;
       border-bottom: 1px solid var(--c-border);
       margin-bottom: 48px;
     }
@@ -24,133 +24,155 @@
     .page-title em { font-style: normal; color: var(--c-accent); }
     .page-sub {
       font-size: 1rem; color: var(--c-text-2);
-      max-width: 500px; line-height: 1.7;
+      max-width: 520px; line-height: 1.7;
     }
  
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-      margin-bottom: 64px;
-    }
- 
-    /* CARD */
-    .card {
-      background: var(--c-bg-card);
-      border: 1px solid var(--c-border);
+    /* CARD ÚNICO — destaque total */
+    .curso-principal {
+      background: linear-gradient(135deg, #0A0F1E 0%, #0d1a3a 100%);
       border-radius: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: box-shadow .2s, transform .2s;
-    }
-    .card:hover {
-      box-shadow: 0 16px 40px rgba(0,0,0,.12);
-      transform: translateY(-4px);
-    }
- 
-    /* CAPA DO CARD */
-    .card-cover {
-      padding: 36px 28px 28px;
+      padding: 48px;
       position: relative;
       overflow: hidden;
+      margin-bottom: 48px;
     }
-    .card-cover::before {
+    .curso-principal::before {
       content: '';
-      position: absolute; inset: 0;
-      background: inherit;
-      opacity: .12;
+      position: absolute; top: -80px; right: -60px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(10,132,255,.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
     }
-    .card-num {
-      font-size: .68rem; font-weight: 800; letter-spacing: .1em;
-      text-transform: uppercase; color: rgba(255,255,255,.6);
-      margin-bottom: 14px;
-    }
-    .card-titulo {
-      font-size: 1.2rem; font-weight: 800; letter-spacing: -.02em;
-      color: #fff; line-height: 1.25; position: relative; z-index: 1;
-    }
-    .card-autor {
-      font-size: .78rem; color: rgba(255,255,255,.6);
-      margin-top: 8px; position: relative; z-index: 1;
+    .curso-principal::after {
+      content: '';
+      position: absolute; bottom: -60px; left: 20%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(90,200,250,.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
     }
  
-    /* CORPO */
-    .card-body {
-      padding: 24px 24px 0;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .curso-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: start;
+      position: relative; z-index: 1;
     }
-    .card-desc {
-      font-size: .87rem; color: var(--c-text-2);
-      line-height: 1.65;
+    @media (max-width: 640px) {
+      .curso-grid { grid-template-columns: 1fr; gap: 32px; }
+      .curso-principal { padding: 32px 24px; }
     }
-    .card-topicos {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
+ 
+    .curso-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,159,10,.2); color: #FF9F0A;
+      font-size: .68rem; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; padding: 4px 12px;
+      border-radius: 100px; border: 1px solid rgba(255,159,10,.3);
+      margin-bottom: 18px; width: fit-content;
     }
-    .card-topico {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-      font-size: .82rem;
-      color: var(--c-text-2);
-      line-height: 1.4;
+    .curso-titulo {
+      font-size: 1.7rem; font-weight: 800; letter-spacing: -.025em;
+      color: #fff; line-height: 1.2; margin-bottom: 10px;
     }
-    .card-topico-dot {
+    .curso-autor {
+      font-size: .82rem; color: rgba(255,255,255,.45);
+      margin-bottom: 18px; font-style: italic;
+    }
+    .curso-desc {
+      font-size: .92rem; color: rgba(255,255,255,.6);
+      line-height: 1.7; max-width: 520px; margin-bottom: 28px;
+    }
+ 
+    .curso-itens {
+      display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px;
+    }
+    .curso-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: .85rem; color: rgba(255,255,255,.7); line-height: 1.4;
+    }
+    .curso-item-dot {
       width: 6px; height: 6px; border-radius: 50%;
-      flex-shrink: 0; margin-top: 5px;
+      background: #0A84FF; flex-shrink: 0; margin-top: 6px;
     }
-    .card-meta {
-      display: flex; gap: 12px; flex-wrap: wrap;
-      font-size: .73rem; color: var(--c-text-3);
-      padding-bottom: 4px;
-    }
-    .card-meta span { display: flex; align-items: center; gap: 4px; }
  
-    /* RODAPÉ */
-    .card-footer {
-      padding: 18px 24px 22px;
-      border-top: 1px solid var(--c-border);
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+    .curso-meta-row {
+      display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px;
     }
-    .card-plataforma {
-      font-size: .7rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .07em; color: var(--c-text-3);
+    .meta-bloco { display: flex; flex-direction: column; gap: 2px; }
+    .meta-label {
+      font-size: .66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: rgba(255,255,255,.35);
     }
-    .btn-curso {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 11px 22px;
-      border-radius: 10px;
-      font-size: .82rem; font-weight: 800;
-      text-decoration: none; color: #fff;
-      transition: opacity .15s, transform .13s;
-      white-space: nowrap;
+    .meta-valor { font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.85); }
+ 
+    .btn-acessar {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #0A84FF; color: #fff;
+      font-size: .95rem; font-weight: 700; padding: 14px 32px;
+      border-radius: 12px; text-decoration: none;
+      transition: background .15s, transform .15s, box-shadow .15s;
     }
-    .btn-curso:hover {
-      opacity: .88; transform: translateY(-1px);
+    .btn-acessar:hover {
+      background: #0070d8; transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(10,132,255,.4);
       text-decoration: none; color: #fff;
     }
-    .btn-curso svg { flex-shrink: 0; }
+    .btn-acessar svg { flex-shrink: 0; }
  
-    /* NOTA BOTTOM */
-    .nota {
-      border-top: 1px solid var(--c-border);
-      padding-top: 28px;
-      font-size: .82rem;
-      color: var(--c-text-3);
-      line-height: 1.65;
-      max-width: 540px;
+    /* CAIXA DE PREÇO */
+    .preco-box {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px; padding: 28px 24px;
+      text-align: center; min-width: 180px;
     }
-    .nota strong { color: var(--c-text-2); }
+    .preco-de {
+      font-size: .78rem; color: rgba(255,255,255,.3);
+      text-decoration: line-through; margin-bottom: 4px;
+    }
+    .preco-por {
+      font-size: 2.2rem; font-weight: 800; color: #fff;
+      letter-spacing: -.04em; line-height: 1; margin-bottom: 4px;
+    }
+    .preco-por span { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.4); }
+    .preco-parcel {
+      font-size: .72rem; color: rgba(255,255,255,.3); margin-bottom: 20px;
+    }
+    .preco-garantia {
+      font-size: .72rem; color: rgba(255,255,255,.4); margin-top: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+ 
+    /* EM BREVE */
+    .em-breve {
+      border: 1.5px dashed var(--c-border);
+      border-radius: 18px; padding: 40px;
+      text-align: center; color: var(--c-text-3);
+    }
+    .em-breve-icon { font-size: 2rem; margin-bottom: 14px; }
+    .em-breve-titulo {
+      font-size: 1rem; font-weight: 700; color: var(--c-text-2);
+      margin-bottom: 8px;
+    }
+    .em-breve-desc { font-size: .85rem; line-height: 1.6; max-width: 400px; margin: 0 auto; }
+ 
+    /* FAQ */
+    .section-label {
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--c-text-3); margin-bottom: 20px;
+      margin-top: 56px;
+    }
+    .faq { display: flex; flex-direction: column; gap: 1px; background: var(--c-border); border: 1px solid var(--c-border); border-radius: 14px; overflow: hidden; }
+    .faq-i { background: var(--c-bg-card); }
+    .faq-q { padding: 16px 20px; font-size: .88rem; font-weight: 700; color: var(--c-text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; user-select: none; }
+    .faq-q:hover { background: rgba(10,132,255,.03); }
+    .faq-chev { color: var(--c-text-3); font-size: .75rem; transition: transform .2s; flex-shrink: 0; }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .28s ease, padding .28s; }
+    .faq-a.on { max-height: 200px; padding: 0 20px 16px; }
+    .faq-a p { font-size: .83rem; color: var(--c-text-2); line-height: 1.65; margin: 0; }
   </style>
 </head>
 <body>
@@ -188,124 +210,143 @@
  
     <div class="page-head">
       <div class="page-eyebrow">I·ten Cursos</div>
-      <h1 class="page-title">Aprenda a prospectar.<br>Venda <em>mais e melhor</em>.</h1>
+      <h1 class="page-title">Aprenda a vender.<br>Com <em>método real</em>.</h1>
       <p class="page-sub">
-        Cursos selecionados para quem vende no B2B.
-        Técnicas aplicáveis no campo, do primeiro contato ao fechamento.
+        Cursos selecionados para profissionais de vendas B2B.
+        Conteúdo aplicável no campo — do primeiro contato ao fechamento.
       </p>
     </div>
  
-    <div class="grid">
+    <!-- CURSO PRINCIPAL -->
+    <div class="curso-principal">
+      <div class="curso-grid">
  
-      <!-- CURSO 1 -->
-      <div class="card">
-        <div class="card-cover" style="background: linear-gradient(140deg, #0A0F1E 0%, #0A84FF 100%);">
-          <div class="card-num">Curso 01 · Prospecção B2B</div>
-          <div class="card-titulo">Método Prospecção Extrema B2B</div>
-          <div class="card-autor">Junior Portare · Professor FGV · Especialista em Vendas B2B</div>
-        </div>
-        <div class="card-body">
-          <p class="card-desc">
-            Como bater nas portas certas e ser atendido pelos decisores.
-            Prospectar em volume, qualidade e velocidade — do primeiro contato
-            ao agendamento da reunião com quem decide a compra.
+        <div>
+          <div class="curso-badge">🎯 Prospecção B2B</div>
+          <div class="curso-titulo">Máquina de Prospecção<br>B2B Inteligente</div>
+          <div class="curso-autor">por Alexandre Serrão</div>
+          <p class="curso-desc">
+            Passo a passo validado para implantar o Método de Prospecção Inteligente
+            e aumentar as vendas do seu negócio de forma previsível. Utiliza
+            Inteligência Artificial e automação de processos para gerar mais reuniões
+            com decisores — mesmo que você nunca tenha prospectado antes.
           </p>
-          <div class="card-topicos">
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#0A84FF;"></div>
-              Como mapear e qualificar prospects antes da abordagem
-            </div>
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#0A84FF;"></div>
-              Técnicas para chegar até o decisor e ser atendido
-            </div>
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#0A84FF;"></div>
-              Scripts de abordagem presencial e por telefone
-            </div>
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#0A84FF;"></div>
-              Como prospectar empresas em volume e velocidade
-            </div>
-          </div>
-          <div class="card-meta">
-            <span>📜 Certificado</span>
-            <span>🛡️ Garantia 7 dias</span>
-            <span>♾️ Acesso vitalício</span>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span class="card-plataforma">Hotmart</span>
-          <a href="https://hotmart.com/pt-br/marketplace/produtos/curso-master-de-prospeccao-b2b/B59967633I"
-             target="_blank" rel="noopener"
-             class="btn-curso"
-             style="background:#0A84FF;">
-            Acessar curso
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 7h10M7 2l5 5-5 5"/>
-            </svg>
-          </a>
-        </div>
-      </div>
  
-      <!-- CURSO 2 -->
-      <div class="card">
-        <div class="card-cover" style="background: linear-gradient(140deg, #1B3A1B 0%, #30D158 100%);">
-          <div class="card-num">Curso 02 · Prospecção B2B</div>
-          <div class="card-titulo">Máquina de Prospecção B2B Inteligente</div>
-          <div class="card-autor">Alexandre Serrão · Especialista em Automação Comercial B2B</div>
-        </div>
-        <div class="card-body">
-          <p class="card-desc">
-            Como prospectar clientes B2B usando inteligência artificial e
-            automação de processos. Um passo a passo para implantar um
-            método de prospecção previsível e escalável.
-          </p>
-          <div class="card-topicos">
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#30D158;"></div>
-              Construir um processo de prospecção previsível do zero
+          <div class="curso-itens">
+            <div class="curso-item">
+              <div class="curso-item-dot"></div>
+              <span>Como montar um processo de prospecção ativa do zero</span>
             </div>
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#30D158;"></div>
-              Usar IA e automação para gerar leads qualificados
+            <div class="curso-item">
+              <div class="curso-item-dot"></div>
+              <span>Uso de IA e automação para qualificar leads com precisão</span>
             </div>
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#30D158;"></div>
-              Cadências de contato para empresários, SDRs e vendedores
+            <div class="curso-item">
+              <div class="curso-item-dot"></div>
+              <span>Scripts validados para cold call e cold mail com alta taxa de resposta</span>
             </div>
-            <div class="card-topico">
-              <div class="card-topico-dot" style="background:#30D158;"></div>
-              Aumentar a base de clientes de forma consistente
+            <div class="curso-item">
+              <div class="curso-item-dot"></div>
+              <span>Como gerar reuniões com decisores de forma previsível e consistente</span>
+            </div>
+            <div class="curso-item">
+              <div class="curso-item-dot"></div>
+              <span>Ideal para vendedores, gestores e empreendedores que vendem para empresas</span>
             </div>
           </div>
-          <div class="card-meta">
-            <span>🤖 IA incluída</span>
-            <span>🛡️ Garantia 7 dias</span>
-            <span>♾️ Acesso vitalício</span>
+ 
+          <div class="curso-meta-row">
+            <div class="meta-bloco">
+              <span class="meta-label">Plataforma</span>
+              <span class="meta-valor">Hotmart</span>
+            </div>
+            <div class="meta-bloco">
+              <span class="meta-label">Acesso</span>
+              <span class="meta-valor">Vitalício</span>
+            </div>
+            <div class="meta-bloco">
+              <span class="meta-label">Garantia</span>
+              <span class="meta-valor">7 dias</span>
+            </div>
+            <div class="meta-bloco">
+              <span class="meta-label">Formato</span>
+              <span class="meta-valor">Online · Autodirigido</span>
+            </div>
           </div>
-        </div>
-        <div class="card-footer">
-          <span class="card-plataforma">Hotmart</span>
+ 
           <a href="https://hotmart.com/pt-br/marketplace/produtos/maquina-de-prospeccao-b2b/A83707975T"
-             target="_blank" rel="noopener"
-             class="btn-curso"
-             style="background:#30D158;">
-            Acessar curso
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 7h10M7 2l5 5-5 5"/>
+             target="_blank" rel="noopener" class="btn-acessar">
+            Acessar o curso
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 8h10M9 4l4 4-4 4"/>
             </svg>
           </a>
         </div>
-      </div>
  
+        <!-- CAIXA DE PREÇO -->
+        <div class="preco-box">
+          <div class="preco-de">R$ 297</div>
+          <div class="preco-por">R$ 97<span>/único</span></div>
+          <div class="preco-parcel">ou 10× de R$ 10,70</div>
+          <a href="https://hotmart.com/pt-br/marketplace/produtos/maquina-de-prospeccao-b2b/A83707975T"
+             target="_blank" rel="noopener" class="btn-acessar" style="width:100%;justify-content:center;">
+            Comprar agora
+          </a>
+          <div class="preco-garantia">🛡️ Garantia de 7 dias</div>
+        </div>
+ 
+      </div>
     </div>
  
-    <!-- NOTA DISCRETA -->
-    <div class="nota">
-      <strong>Mais cursos em breve.</strong>
-      Novos cursos serão adicionados conforme a curadoria avança.
-      Os links acima levam diretamente para a página de cada curso na Hotmart.
+    <!-- EM BREVE -->
+    <div class="em-breve">
+      <div class="em-breve-icon">🔜</div>
+      <div class="em-breve-titulo">Mais cursos em breve</div>
+      <p class="em-breve-desc">
+        Novos cursos de negociação, fechamento e gestão comercial
+        serão adicionados conforme a curadoria avança.
+      </p>
+    </div>
+ 
+    <!-- FAQ -->
+    <div class="section-label">Dúvidas</div>
+    <div class="faq">
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Como funciona o acesso após a compra?
+          <span class="faq-chev">▼</span>
+        </div>
+        <div class="faq-a">
+          <p>Após a confirmação do pagamento na Hotmart, você recebe o acesso por e-mail em até 30 minutos. O curso fica disponível na sua conta Hotmart — acesse em qualquer dispositivo, sem prazo de expiração.</p>
+        </div>
+      </div>
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Tem garantia se não gostar?
+          <span class="faq-chev">▼</span>
+        </div>
+        <div class="faq-a">
+          <p>Sim. O curso tem garantia incondicional de 7 dias. Você pode pedir reembolso integral dentro desse prazo diretamente pela Hotmart, sem necessidade de justificativa.</p>
+        </div>
+      </div>
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Serve para quem vende refrigeração?
+          <span class="faq-chev">▼</span>
+        </div>
+        <div class="faq-a">
+          <p>Sim. O método de prospecção B2B é aplicável a qualquer segmento que vende para empresas — incluindo equipamentos de refrigeração, manutenção, climatização e projetos HVAC. Os scripts e cadências funcionam para visitas presenciais e abordagens por telefone.</p>
+        </div>
+      </div>
+      <div class="faq-i">
+        <div class="faq-q" onclick="faq(this)">
+          Posso parcelar?
+          <span class="faq-chev">▼</span>
+        </div>
+        <div class="faq-a">
+          <p>Sim. A Hotmart aceita PIX (com desconto adicional), cartão de crédito em até 10× e boleto bancário. As opções aparecem na página de pagamento do curso.</p>
+        </div>
+      </div>
     </div>
  
   </div>
@@ -318,6 +359,15 @@ requireAuth();
 const user = Auth.getUser();
 document.getElementById('dd-name').textContent  = user?.name  || '';
 document.getElementById('dd-email').textContent = user?.email || '';
+ 
+function faq(el) {
+  const a    = el.nextElementSibling;
+  const chev = el.querySelector('.faq-chev');
+  const open = a.classList.contains('on');
+  document.querySelectorAll('.faq-a').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.faq-chev').forEach(x => x.style.transform = '');
+  if (!open) { a.classList.add('on'); chev.style.transform = 'rotate(180deg)'; }
+}
 </script>
 </body>
 </html>
