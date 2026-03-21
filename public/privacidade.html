@@ -5,93 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>I·ten — Política de Privacidade</title>
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{--ink:#080E1A;--ink2:#0D1525;--ice:#5AC8FA;--blue:#0A84FF;--white:#fff;--muted:rgba(255,255,255,.45);--bdr:rgba(255,255,255,.08);}
-    body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--white);line-height:1.7;}
-    nav{position:sticky;top:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(8,14,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);z-index:100;}
-    .brand{display:flex;align-items:center;gap:9px;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--white);text-decoration:none;}
-    .brand:hover{text-decoration:none;color:var(--white);}
-    .back{color:var(--muted);font-size:.85rem;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .13s;}
-    .back:hover{color:var(--white);text-decoration:none;}
-    .wrap{max-width:760px;margin:0 auto;padding:64px 40px;}
-    @media(max-width:600px){.wrap{padding:48px 24px;}}
-    .pg-tag{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ice);margin-bottom:14px;display:block;}
-    h1{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;letter-spacing:-.035em;color:var(--white);margin-bottom:12px;}
-    .update{font-size:.8rem;color:var(--muted);margin-bottom:56px;}
-    h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--white);margin:40px 0 12px;padding-top:8px;border-top:1px solid var(--bdr);}
-    p{font-size:.9rem;color:rgba(255,255,255,.65);margin-bottom:14px;line-height:1.75;}
-    ul{list-style:none;padding:0;margin-bottom:14px;}
-    ul li{font-size:.9rem;color:rgba(255,255,255,.65);padding:5px 0 5px 18px;position:relative;line-height:1.65;}
-    ul li::before{content:'—';position:absolute;left:0;color:var(--blue);font-weight:700;}
-    .hl{background:rgba(90,200,250,.06);border:1px solid rgba(90,200,250,.14);border-radius:12px;padding:20px 24px;margin:24px 0;}
-    .hl p{margin:0;color:rgba(255,255,255,.55);}
-    footer{border-top:1px solid var(--bdr);padding:28px 40px;text-align:center;font-size:.76rem;color:rgba(255,255,255,.22);}
+    :root{--bg:#fff;--bg2:#F4F8FF;--blue:#1A6EFF;--text:#111827;--text2:#4B5563;--text3:#9CA3AF;--bdr:#E5EEFF;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;}
+    nav{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:#fff;border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:10;}
+    .brand{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:700;color:var(--text);text-decoration:none;}
+    .brand:hover{text-decoration:none;color:var(--text);}
+    .back{color:var(--text3);font-size:.8rem;text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .12s;}
+    .back:hover{color:var(--blue);text-decoration:none;}
+    .wrap{max-width:720px;margin:0 auto;padding:56px 40px 80px;}
+    @media(max-width:600px){.wrap{padding:40px 20px 64px;}}
+    .pg-tag{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;display:block;}
+    h1{font-size:1.65rem;font-weight:700;letter-spacing:-.025em;color:var(--text);margin-bottom:8px;}
+    .update{font-size:.76rem;color:var(--text3);margin-bottom:44px;}
+    h2{font-size:.92rem;font-weight:700;color:var(--text);margin:32px 0 10px;padding-top:8px;border-top:1px solid var(--bdr);}
+    p{font-size:.85rem;color:var(--text2);margin-bottom:12px;line-height:1.7;}
+    ul{list-style:none;padding:0;margin-bottom:12px;}
+    ul li{font-size:.85rem;color:var(--text2);padding:4px 0 4px 16px;position:relative;line-height:1.6;}
+    ul li::before{content:'–';position:absolute;left:0;color:var(--blue);}
+    .hl{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 20px;margin:20px 0;}
+    .hl p{margin:0;color:var(--text2);}
+    footer{border-top:1px solid var(--bdr);padding:20px 40px;text-align:center;font-size:.72rem;color:var(--text3);background:#fff;}
   </style>
 </head>
 <body>
 <nav>
-  <a href="/" class="brand"><img src="/assets/logo.svg" width="22" height="22" alt="I·ten">I·ten</a>
+  <a href="/" class="brand"><img src="/assets/logo.svg" width="20" height="20" alt="I·ten">I·ten</a>
   <a href="/" class="back">
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4L6 8l4 4"/></svg>
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4L6 8l4 4"/></svg>
     Voltar
   </a>
 </nav>
- 
 <div class="wrap">
   <span class="pg-tag">Legal</span>
   <h1>Política de Privacidade</h1>
   <p class="update">Última atualização: março de 2026</p>
- 
-  <div class="hl"><p>A I·ten trata seus dados com responsabilidade. Esta política explica quais informações coletamos, como as utilizamos e como as protegemos, em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018).</p></div>
+  <div class="hl"><p>Esta política explica como a I·ten trata seus dados, em conformidade com a LGPD (Lei 13.709/2018).</p></div>
  
   <h2>1. Dados que coletamos</h2>
-  <p>Ao criar uma conta e utilizar a plataforma, coletamos:</p>
   <ul>
-    <li>Nome completo e endereço de e-mail (fornecidos no cadastro)</li>
-    <li>Dados de acesso: registros de login e atividade na plataforma</li>
-    <li>Dados de uso: empresas adicionadas à carteira, notas e registros do pipeline</li>
+    <li>Nome completo e e-mail (fornecidos no cadastro)</li>
+    <li>Registros de login e atividade na plataforma</li>
+    <li>Empresas adicionadas à carteira, notas e registros de pipeline</li>
   </ul>
   <p>Não coletamos dados de pagamento, documentos pessoais ou informações sensíveis.</p>
  
   <h2>2. Como usamos os dados</h2>
-  <p>Seus dados são usados exclusivamente para:</p>
   <ul>
     <li>Autenticar seu acesso à plataforma</li>
-    <li>Personalizar sua experiência (carteira individual, histórico de prospecção)</li>
-    <li>Permitir que o gestor da equipe visualize o andamento das carteiras</li>
-    <li>Melhorar a plataforma com base no uso agregado e anônimo</li>
+    <li>Personalizar sua experiência (carteira, histórico de prospecção)</li>
+    <li>Permitir que o gestor visualize o andamento das carteiras</li>
+    <li>Melhorar a plataforma com base em uso agregado e anônimo</li>
   </ul>
-  <p>Não compartilhamos seus dados pessoais com terceiros para fins comerciais.</p>
+  <p>Não compartilhamos dados pessoais com terceiros para fins comerciais.</p>
  
-  <h2>3. Armazenamento e segurança</h2>
-  <p>Seus dados são armazenados de forma segura em banco de dados com acesso restrito. As senhas são protegidas com criptografia de hash (bcrypt). O tráfego entre o seu dispositivo e a plataforma é criptografado via HTTPS.</p>
+  <h2>3. Segurança</h2>
+  <p>Dados armazenados com acesso restrito. Senhas protegidas com hash bcrypt. Tráfego criptografado via HTTPS.</p>
  
-  <h2>4. Retenção dos dados</h2>
-  <p>Seus dados são mantidos enquanto sua conta estiver ativa. Você pode solicitar a exclusão da sua conta a qualquer momento pelo canal de suporte da plataforma. Dados de uso podem ser mantidos de forma anonimizada para fins de análise interna.</p>
+  <h2>4. Retenção</h2>
+  <p>Dados mantidos enquanto a conta estiver ativa. A exclusão pode ser solicitada pelo canal de suporte.</p>
  
   <h2>5. Seus direitos (LGPD)</h2>
-  <p>Como titular de dados, você tem direito a:</p>
   <ul>
-    <li>Confirmar a existência e acessar seus dados pessoais</li>
-    <li>Solicitar a correção de dados incompletos ou incorretos</li>
-    <li>Solicitar a exclusão dos seus dados pessoais</li>
+    <li>Confirmar e acessar seus dados pessoais</li>
+    <li>Solicitar correção de dados incorretos</li>
+    <li>Solicitar exclusão dos seus dados</li>
     <li>Revogar o consentimento a qualquer momento</li>
-    <li>Obter informações sobre com quem seus dados são compartilhados</li>
   </ul>
  
-  <h2>6. Cookies e rastreamento</h2>
-  <p>A plataforma I·ten utiliza apenas armazenamento local (localStorage) para manter sua sessão ativa. Não utilizamos cookies de rastreamento, publicidade ou análise de terceiros.</p>
+  <h2>6. Cookies</h2>
+  <p>A plataforma usa apenas localStorage para manter a sessão ativa. Não utilizamos cookies de rastreamento ou publicidade.</p>
  
-  <h2>7. Alterações nesta política</h2>
-  <p>Esta Política de Privacidade pode ser atualizada. Alterações relevantes serão comunicadas por e-mail ou por aviso na plataforma com antecedência mínima de 7 dias.</p>
+  <h2>7. Alterações</h2>
+  <p>Esta política pode ser atualizada. Alterações relevantes serão comunicadas com antecedência de 7 dias.</p>
  
   <h2>8. Contato</h2>
-  <p>Para exercer seus direitos ou esclarecer dúvidas sobre privacidade, entre em contato pelo canal de reportes dentro da plataforma ou diretamente com o administrador da conta.</p>
+  <p>Para exercer seus direitos, entre em contato pelo canal de reportes dentro da plataforma.</p>
 </div>
- 
-<footer>Copyright &copy; 2026 I·ten. Elaborado por Matheus Augusto Roseira Santana. Todos os direitos reservados.</footer>
+<footer>Copyright &copy; 2026 I·ten &nbsp;·&nbsp; Elaborado por Matheus Augusto Roseira Santana. Todos os direitos reservados.</footer>
 </body>
 </html>
