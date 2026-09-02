@@ -23,3 +23,28 @@ database/db.js
 public/index.html
 setup.sh
 {*
+
+# Artefatos do SQLite e metadados do Windows
+*.db-shm
+*.db-wal
+*:Zone.Identifier
+
+# Backups e etapas intermediárias do processamento de empresas
+data/bd_definitivo_BACKUP_*.json
+data/bd_definitivo_backup.json
+data/bd_definitivo_corrigido.json
+data/bd_etapa*.json
+data/bd_passo*.json
+data/.prog_*.json
+data/.progresso_*.json
+data/log_*.txt
+data/relatorio_*.txt
+
+# Scripts pessoais e pastas de apoio (nao fazem parte da app)
+atualizar_telefones.py
+data/etapa1_opencnpj.py
+scripts_iten/
+passo4_publicar.sh
+
+# Pagina antiga duplicada
+public/login.htm

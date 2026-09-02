@@ -12,7 +12,6 @@ const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
  
-// ── TABELAS ───────────────────────────────────────────────────────────────────
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,7 +71,6 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_wallet_company ON wallets(company_id);
 `);
  
-// ── IMPORTAR EMPRESAS ─────────────────────────────────────────────────────────
 const countExisting = db.prepare('SELECT COUNT(*) as c FROM companies').get().c;
  
 if (countExisting === 0) {
@@ -125,12 +123,17 @@ if (countExisting === 0) {
   console.log('[init] Banco existente: ' + countExisting + ' empresas | ' + mun + ' municipios.');
 }
  
-// ── ADMIN PADRÃO ──────────────────────────────────────────────────────────────
 if (!db.prepare("SELECT id FROM users WHERE role='admin' LIMIT 1").get()) {
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@ceresrefrigeracao.com.br';
+  const adminPass  = process.env.ADMIN_PASSWORD || require('crypto').randomBytes(9).toString('base64');
   db.prepare("INSERT INTO users (name, email, password, role) VALUES (?,?,?,?)")
-    .run('Administrador', 'admin@ceresrefrigeracao.com.br',
-         bcrypt.hashSync('Ceres@2024!', 10), 'admin');
-  console.log('[init] Admin criado: admin@ceresrefrigeracao.com.br / Ceres@2024!');
+    .run('Administrador', adminEmail, bcrypt.hashSync(adminPass, 10), 'admin');
+  if (process.env.ADMIN_PASSWORD) {
+    console.log('[init] Admin criado: ' + adminEmail + ' (senha definida via ADMIN_PASSWORD)');
+  } else {
+    console.log('[init] Admin criado: ' + adminEmail + ' / senha gerada automaticamente: ' + adminPass);
+    console.log('[init] Copie essa senha AGORA — ela so aparece uma vez nos logs.');
+  }
 }
  
 db.close();
