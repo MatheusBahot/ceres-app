@@ -37,6 +37,8 @@ db.exec(`
     tel2          TEXT,
     tel3          TEXT,
     email         TEXT,
+    whatsapp      TEXT,
+    whatsapp_business INTEGER DEFAULT 0,
     prio          INTEGER DEFAULT 20
   );
  
@@ -93,6 +95,8 @@ if (countExisting === 0) {
         tel2:          e.Tel2          || e['Telefone 2']   || '',
         tel3:          e.Tel3          || e['Telefone 3']   || '',
         email:         e.Email         || e['E-mail']       || '',
+        whatsapp:          e.whatsapp_number   || '',
+        whatsapp_business: e.whatsapp_business ? 1 : 0,
         prio:          e.prio          || 20,
       };
     }
@@ -100,10 +104,10 @@ if (countExisting === 0) {
     const insert = db.prepare(`
       INSERT OR IGNORE INTO companies
         (grupo, segmento, nome_fantasia, razao_social, cnpj,
-         municipio, tel1, tel2, tel3, email, prio)
+         municipio, tel1, tel2, tel3, email, whatsapp, whatsapp_business, prio)
       VALUES
         (@grupo, @segmento, @nome_fantasia, @razao_social, @cnpj,
-         @municipio, @tel1, @tel2, @tel3, @email, @prio)
+         @municipio, @tel1, @tel2, @tel3, @email, @whatsapp, @whatsapp_business, @prio)
     `);
  
     const run = db.transaction(list => {

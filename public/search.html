@@ -276,6 +276,7 @@ let grupoAtual    = '';
 let empresasAtuais = [];  // array de empresas carregadas
 const cacheModal  = {};  // { [id]: empresa }
 let letraAtiva    = '';
+let cidadesTocadas = false; // vira true só depois que o usuário digita ou clica em uma letra/"Todas"
 let timerBusca;
  
 // ── GRUPOS ────────────────────────────────────────────────────────────────────
@@ -344,13 +345,19 @@ async function carregarCidades() {
       return d;
     });
     construirBarraAlpha(todasCidades);
-    renderCidades(todasCidades);
-    document.getElementById('info-cidades').textContent =
-      todasCidades.length + ' municípios';
+    mostrarEstadoInicialCidades();
   } catch(e) {
     document.getElementById('grid-cidades').innerHTML =
       '<div class="estado-vazio" style="grid-column:1/-1;">Erro ao carregar municípios. Verifique a conexão.</div>';
   }
+}
+
+// Estado inicial: nenhuma cidade listada até o usuário buscar ou escolher uma letra
+function mostrarEstadoInicialCidades() {
+  document.getElementById('grid-cidades').innerHTML =
+    '<div class="estado-vazio" style="grid-column:1/-1;">Digite o nome do município ou escolha uma letra acima para localizá-lo.</div>';
+  document.getElementById('info-cidades').textContent =
+    todasCidades.length + ' municípios disponíveis';
 }
  
 function construirBarraAlpha(cidades) {
@@ -366,6 +373,7 @@ function construirBarraAlpha(cidades) {
 }
  
 function filtrarAlpha(letra) {
+  cidadesTocadas = true;
   letraAtiva = letra;
   document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('ativo'));
   if (letra) {
@@ -381,6 +389,8 @@ function filtrarAlpha(letra) {
  
 function aplicarFiltroCidade() {
   const q = document.getElementById('filtro-cidade').value.toLowerCase().trim();
+  if (q) cidadesTocadas = true;
+  if (!cidadesTocadas) { mostrarEstadoInicialCidades(); return; }
   let lista = todasCidades;
   if (letraAtiva) lista = lista.filter(c => c.municipio.toUpperCase().startsWith(letraAtiva));
   if (q) lista = lista.filter(c => c.municipio.toLowerCase().includes(q));
@@ -534,6 +544,10 @@ function buildCard(c) {
  
   // Botão carteira
   const naCarteira = c.in_my_wallet == 1 || c.in_my_wallet === true;
+  const btnWhatsapp = c.whatsapp
+    ? '<a class="btn btn-sm btn-whatsapp" href="https://wa.me/' + c.whatsapp.replace(/\D/g,'') +
+      '" target="_blank" rel="noopener">💬 WhatsApp' + (c.whatsapp_business ? ' Business' : '') + '</a>'
+    : '';
   const btnCarteira = naCarteira
     ? `<span class="badge badge-green" data-wid="${id}">Na carteira</span>`
     : `<button class="btn btn-sm btn-primary" onclick="adicionarCarteira(${id}, this)">+ Carteira</button>`;
@@ -545,6 +559,7 @@ function buildCard(c) {
       <div class="empresa-seg">${escHtml(c.segmento || c.grupo || '')}</div>
     </div>
     <div class="empresa-acoes">
+      ${btnWhatsapp}
       ${btnCarteira}
       <button class="btn btn-sm btn-secondary" onclick="abrirModal(${id})">Ver</button>
     </div>
@@ -652,6 +667,12 @@ async function abrirModal(id) {
     const emailHtml = c.email
       ? `<a href="mailto:${escHtml(c.email)}">${escHtml(c.email)}</a>`
       : null;
+
+    // ── WhatsApp confirmado ──────────────────────────────────
+    const whatsappHtml = c.whatsapp
+      ? '<a href="https://wa.me/' + c.whatsapp.replace(/\D/g,'') + '" target="_blank" rel="noopener" class="wa-link">' +
+        escHtml(c.whatsapp) + (c.whatsapp_business ? ' <span class="m-tag m-tag-wa">Business</span>' : '') + '</a>'
+      : null;
  
     // ── helper de campo ────────────────────────────────────
     const vazio = '<span class="m-vazio">Não informado</span>';
@@ -668,6 +689,7 @@ async function abrirModal(id) {
       campo('Município',   escHtml(c.municipio || ''), false),
       campo('Segmento',    escHtml(c.segmento  || ''), false),
       campo('Grupo',       escHtml(c.grupo     || ''), false),
+      campo('WhatsApp',    whatsappHtml, false),
       campo('Telefone' + (tels.length > 1 ? 's' : ''), telHtml, false),
       campo('E-mail',      emailHtml, false),
     ].filter(Boolean);
