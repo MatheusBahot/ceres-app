@@ -48,3 +48,6 @@ passo4_publicar.sh
 
 # Pagina antiga duplicada
 public/login.htm
+data/bd_definitivo_com_maps.json
+data/log_maps_baixa_confianca.txt
+data/log_maps_nao_encontrado.txt

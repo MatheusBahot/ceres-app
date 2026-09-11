@@ -3,6 +3,9 @@ Verifica quais empresas têm WhatsApp de verdade, usando a API oficial da
 CheckNumber.AI (nao precisa logar com seu proprio WhatsApp, sem risco de
 banimento). Documentacao: https://docs.checknumber.ai/whatsapp-activity-checker/
 
+Usa a camada mais enriquecida disponivel: Maps > Receita Federal > base
+original, na ordem de preferencia.
+
 Uso:
     export CHECKNUMBER_API_KEY="sua_chave_aqui"
     python3 data/wa_pipeline.py
@@ -12,8 +15,11 @@ import requests
 
 API_KEY   = os.environ.get("CHECKNUMBER_API_KEY")
 BASE      = "https://api.checknumber.ai"
-DATA_PATH = "data/bd_definitivo.json"
+DATA_PATH_MAPS      = "data/bd_definitivo_com_maps.json"
+DATA_PATH_RECEITA   = "data/bd_definitivo_com_receita.json"
+DATA_PATH_ORIGINAL  = "data/bd_definitivo.json"
 TASK_TYPE = "ws_active"   # retorna whatsapp_days + whatsapp_business (conta comercial)
+CAMPOS_TELEFONE = ("Tel1", "Tel2", "Tel3", "receita_tel1", "receita_tel2", "maps_tel")
 
 
 def normaliza_e164(t):
@@ -28,7 +34,19 @@ def normaliza_e164(t):
     return None
 
 
-def carregar_empresas(path=DATA_PATH):
+def carregar_empresas():
+    if os.path.exists(DATA_PATH_MAPS):
+        print(f"Usando base enriquecida com Google Maps ({DATA_PATH_MAPS}).")
+        path = DATA_PATH_MAPS
+    elif os.path.exists(DATA_PATH_RECEITA):
+        print(f"Usando base enriquecida com dados da Receita Federal ({DATA_PATH_RECEITA}).")
+        print("Dica: rode data/maps_enrich.py pra incluir tambem telefones do Google Maps.")
+        path = DATA_PATH_RECEITA
+    else:
+        print("Aviso: rode data/cnpj_enrich.py e/ou data/maps_enrich.py antes,")
+        print("pra incluir telefones oficiais e do Google Maps.")
+        print(f"Prosseguindo so com os telefones ja existentes em {DATA_PATH_ORIGINAL}.")
+        path = DATA_PATH_ORIGINAL
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
@@ -36,7 +54,7 @@ def carregar_empresas(path=DATA_PATH):
 def extrair_numeros(empresas):
     numeros = set()
     for e in empresas:
-        for campo in ("Tel1", "Tel2", "Tel3"):
+        for campo in CAMPOS_TELEFONE:
             n = normaliza_e164(e.get(campo, ""))
             if n:
                 numeros.add(n)
@@ -107,13 +125,14 @@ def mesclar(empresas, resultados):
     sem_whatsapp = []
     for e in empresas:
         candidatos = []
-        for campo in ("Tel1", "Tel2", "Tel3"):
+        for campo in CAMPOS_TELEFONE:
             n = normaliza_e164(e.get(campo, ""))
             if n and n in resultados:
                 r = resultados[n]
                 if r["whatsapp_days"] not in ("N/A", "", None):
                     candidatos.append((n, r))
         if candidatos:
+            # prioriza numero marcado como WhatsApp Business
             candidatos.sort(key=lambda x: (not x[1]["whatsapp_business"]))
             melhor_num, melhor = candidatos[0]
             e["whatsapp_number"]   = melhor_num
