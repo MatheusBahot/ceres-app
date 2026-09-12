@@ -51,3 +51,8 @@ public/login.htm
 data/bd_definitivo_com_maps.json
 data/log_maps_baixa_confianca.txt
 data/log_maps_nao_encontrado.txt
+data/bd_definitivo_com_receita.json
+data/log_receita_nao_encontrado.txt
+data/bd_definitivo_com_maps.json
+data/log_maps_baixa_confianca.txt
+data/log_maps_nao_encontrado.txt
