@@ -56,3 +56,8 @@ data/log_receita_nao_encontrado.txt
 data/bd_definitivo_com_maps.json
 data/log_maps_baixa_confianca.txt
 data/log_maps_nao_encontrado.txt
+
+# Enriquecimento de dados (arquivos locais, nao vao pro repositorio publico)
+data/bd_enriquecido.json
+data/log_*.txt
+data/numeros_para_checar.txt

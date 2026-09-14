@@ -3,50 +3,37 @@ Verifica quais empresas têm WhatsApp de verdade, usando a API oficial da
 CheckNumber.AI (nao precisa logar com seu proprio WhatsApp, sem risco de
 banimento). Documentacao: https://docs.checknumber.ai/whatsapp-activity-checker/
 
-Usa a camada mais enriquecida disponivel: Maps > Receita Federal > base
-original, na ordem de preferencia.
+Le data/bd_enriquecido.json (produzido por cnpj_enrich.py, maps_enrich.py,
+aws_enrich.py, here_enrich.py e/ou osm_enrich.py - rode quantos quiser
+antes deste, cada um adiciona seus proprios campos) e cruza TODOS os
+telefones de TODAS as fontes numa unica checagem de WhatsApp.
 
 Uso:
     export CHECKNUMBER_API_KEY="sua_chave_aqui"
     python3 data/wa_pipeline.py
 """
-import json, re, os, sys, time, zipfile, io, csv
+import json, os, sys, time, zipfile, io, csv
 import requests
+
+sys.path.insert(0, os.path.dirname(__file__))
+from _enrich_common import ENRIQUECIDO_PATH, ORIGINAL_PATH, normaliza_e164
 
 API_KEY   = os.environ.get("CHECKNUMBER_API_KEY")
 BASE      = "https://api.checknumber.ai"
-DATA_PATH_MAPS      = "data/bd_definitivo_com_maps.json"
-DATA_PATH_RECEITA   = "data/bd_definitivo_com_receita.json"
-DATA_PATH_ORIGINAL  = "data/bd_definitivo.json"
 TASK_TYPE = "ws_active"   # retorna whatsapp_days + whatsapp_business (conta comercial)
-CAMPOS_TELEFONE = ("Tel1", "Tel2", "Tel3", "receita_tel1", "receita_tel2", "maps_tel")
-
-
-def normaliza_e164(t):
-    """Converte um telefone BR em qualquer formato para E.164 (+55DDNNNNNNNNN)."""
-    d = re.sub(r"\D", "", t or "")
-    if d.startswith("55") and len(d) in (12, 13):
-        d = d[2:]
-    if len(d) == 11 and d[2] == "9":   # celular: DDD + 9 + 8 digitos
-        return "+55" + d
-    if len(d) == 10:                    # fixo: DDD + 8 digitos
-        return "+55" + d
-    return None
+CAMPOS_TELEFONE = (
+    "Tel1", "Tel2", "Tel3",
+    "receita_tel1", "receita_tel2",
+    "maps_tel", "aws_tel", "here_tel", "osm_tel",
+)
 
 
 def carregar_empresas():
-    if os.path.exists(DATA_PATH_MAPS):
-        print(f"Usando base enriquecida com Google Maps ({DATA_PATH_MAPS}).")
-        path = DATA_PATH_MAPS
-    elif os.path.exists(DATA_PATH_RECEITA):
-        print(f"Usando base enriquecida com dados da Receita Federal ({DATA_PATH_RECEITA}).")
-        print("Dica: rode data/maps_enrich.py pra incluir tambem telefones do Google Maps.")
-        path = DATA_PATH_RECEITA
-    else:
-        print("Aviso: rode data/cnpj_enrich.py e/ou data/maps_enrich.py antes,")
-        print("pra incluir telefones oficiais e do Google Maps.")
-        print(f"Prosseguindo so com os telefones ja existentes em {DATA_PATH_ORIGINAL}.")
-        path = DATA_PATH_ORIGINAL
+    path = ENRIQUECIDO_PATH if os.path.exists(ENRIQUECIDO_PATH) else ORIGINAL_PATH
+    print(f"Usando base: {path}")
+    if path == ORIGINAL_PATH:
+        print("Aviso: nenhum enriquecimento rodado ainda (cnpj_enrich/maps_enrich/")
+        print("aws_enrich/here_enrich/osm_enrich) - usando so os telefones originais.")
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
@@ -70,8 +57,12 @@ def enviar_tarefa(numeros):
         data={"task_type": TASK_TYPE},
         timeout=60,
     )
-    resp.raise_for_status()
-    return resp.json()
+    if resp.status_code != 200:
+        sys.exit(f"Erro ao criar tarefa na CheckNumber.AI (status {resp.status_code}): {resp.text[:500]}")
+    dados = resp.json()
+    if "task_id" not in dados:
+        sys.exit(f"Resposta inesperada da CheckNumber.AI (sem task_id): {dados}")
+    return dados
 
 
 def consultar_status(task_id):
@@ -92,7 +83,6 @@ def baixar_resultado(url):
 
 
 def parse_resultado(conteudo_zip):
-    """Le o zip retornado pela API e devolve {numero: {whatsapp_days, whatsapp_business}}."""
     resultados = {}
     with zipfile.ZipFile(io.BytesIO(conteudo_zip)) as z:
         for nome in z.namelist():
@@ -113,15 +103,11 @@ def parse_resultado(conteudo_zip):
                 numero = linha[idx_num].strip()
                 dias = linha[idx_days].strip() if idx_days is not None and idx_days < len(linha) else "N/A"
                 biz  = linha[idx_biz].strip().lower() if idx_biz is not None and idx_biz < len(linha) else "no"
-                resultados[numero] = {
-                    "whatsapp_days": dias,
-                    "whatsapp_business": biz == "yes",
-                }
+                resultados[numero] = {"whatsapp_days": dias, "whatsapp_business": biz == "yes"}
     return resultados
 
 
 def mesclar(empresas, resultados):
-    """Anota cada empresa com o melhor numero de WhatsApp encontrado (se houver)."""
     sem_whatsapp = []
     for e in empresas:
         candidatos = []
@@ -130,26 +116,26 @@ def mesclar(empresas, resultados):
             if n and n in resultados:
                 r = resultados[n]
                 if r["whatsapp_days"] not in ("N/A", "", None):
-                    candidatos.append((n, r))
+                    candidatos.append((n, r, campo))
         if candidatos:
-            # prioriza numero marcado como WhatsApp Business
             candidatos.sort(key=lambda x: (not x[1]["whatsapp_business"]))
-            melhor_num, melhor = candidatos[0]
+            melhor_num, melhor, campo_origem = candidatos[0]
             e["whatsapp_number"]   = melhor_num
             e["whatsapp_business"] = melhor["whatsapp_business"]
             e["whatsapp_days"]     = melhor["whatsapp_days"]
+            e["whatsapp_fonte"]    = campo_origem
         else:
             e["whatsapp_number"]   = None
             e["whatsapp_business"] = False
             e["whatsapp_days"]     = None
+            e["whatsapp_fonte"]    = None
             sem_whatsapp.append(e)
     return empresas, sem_whatsapp
 
 
 def main():
     if not API_KEY:
-        sys.exit("Defina a variavel de ambiente CHECKNUMBER_API_KEY antes de rodar "
-                  "(export CHECKNUMBER_API_KEY=\"sua_chave\").")
+        sys.exit("Defina a variavel de ambiente CHECKNUMBER_API_KEY antes de rodar.")
 
     print("Carregando base...")
     empresas = carregar_empresas()
@@ -187,8 +173,13 @@ def main():
 
     with open("data/relatorio_sem_whatsapp.txt", "w", encoding="utf-8") as f:
         for e in sem_whatsapp:
-            nome = e.get("Nome_Fantasia") or e.get("Razao_Social") or "?"
-            f.write(f"{nome} | {e.get('Municipio','')} | {e.get('CNPJ','')}\n")
+            f.write(f"{e.get('Nome_Fantasia') or e.get('Razao_Social') or '?'} | {e.get('Municipio','')} | {e.get('CNPJ','')}\n")
+
+    por_fonte = {}
+    for e in empresas:
+        f_ = e.get("whatsapp_fonte")
+        if f_:
+            por_fonte[f_] = por_fonte.get(f_, 0) + 1
 
     com_wa = len(empresas) - len(sem_whatsapp)
     print()
@@ -196,12 +187,15 @@ def main():
     print(f"Com WhatsApp confirmado:  {com_wa}")
     print(f"Sem WhatsApp confirmado:  {len(sem_whatsapp)}")
     print()
+    print("WhatsApp confirmado veio de cada fonte:")
+    for campo, qtd in sorted(por_fonte.items(), key=lambda x: -x[1]):
+        print(f"  {campo:20s}: {qtd}")
+    print()
     print("A base original (data/bd_definitivo.json) NAO foi alterada ainda.")
     print("Resultado completo em data/bd_definitivo_enriquecido.json")
     print("Lista das sem WhatsApp em data/relatorio_sem_whatsapp.txt")
     print()
-    print("Revise o relatorio. Quando estiver pronto para aplicar de vez")
-    print("(remover as empresas sem WhatsApp e publicar as demais), rode:")
+    print("Revise o relatorio. Quando estiver pronto para aplicar de vez, rode:")
     print("    python3 data/wa_aplicar.py")
 
 
