@@ -548,6 +548,12 @@ function buildCard(c) {
     ? '<a class="btn btn-sm btn-whatsapp" href="https://wa.me/' + c.whatsapp.replace(/\D/g,'') +
       '" target="_blank" rel="noopener">💬 WhatsApp' + (c.whatsapp_business ? ' Business' : '') + '</a>'
     : '';
+  const btnInstagram = c.instagram
+    ? '<a class="btn btn-sm btn-social" href="' + c.instagram + '" target="_blank" rel="noopener">📷 Instagram</a>'
+    : '';
+  const btnFacebook = c.facebook
+    ? '<a class="btn btn-sm btn-social" href="' + c.facebook + '" target="_blank" rel="noopener">👍 Facebook</a>'
+    : '';
   const btnCarteira = naCarteira
     ? `<span class="badge badge-green" data-wid="${id}">Na carteira</span>`
     : `<button class="btn btn-sm btn-primary" onclick="adicionarCarteira(${id}, this)">+ Carteira</button>`;
@@ -560,6 +566,8 @@ function buildCard(c) {
     </div>
     <div class="empresa-acoes">
       ${btnWhatsapp}
+      ${btnInstagram}
+      ${btnFacebook}
       ${btnCarteira}
       <button class="btn btn-sm btn-secondary" onclick="abrirModal(${id})">Ver</button>
     </div>
@@ -673,6 +681,14 @@ async function abrirModal(id) {
       ? '<a href="https://wa.me/' + c.whatsapp.replace(/\D/g,'') + '" target="_blank" rel="noopener" class="wa-link">' +
         escHtml(c.whatsapp) + (c.whatsapp_business ? ' <span class="m-tag m-tag-wa">Business</span>' : '') + '</a>'
       : null;
+
+    // ── Redes sociais ──────────────────────────────────────
+    const instagramHtml = c.instagram
+      ? `<a href="${escHtml(c.instagram)}" target="_blank" rel="noopener">${escHtml(c.instagram)}</a>`
+      : null;
+    const facebookHtml = c.facebook
+      ? `<a href="${escHtml(c.facebook)}" target="_blank" rel="noopener">${escHtml(c.facebook)}</a>`
+      : null;
  
     // ── helper de campo ────────────────────────────────────
     const vazio = '<span class="m-vazio">Não informado</span>';
@@ -690,6 +706,8 @@ async function abrirModal(id) {
       campo('Segmento',    escHtml(c.segmento  || ''), false),
       campo('Grupo',       escHtml(c.grupo     || ''), false),
       campo('WhatsApp',    whatsappHtml, false),
+      campo('Instagram',   instagramHtml, false),
+      campo('Facebook',    facebookHtml, false),
       campo('Telefone' + (tels.length > 1 ? 's' : ''), telHtml, false),
       campo('E-mail',      emailHtml, false),
     ].filter(Boolean);

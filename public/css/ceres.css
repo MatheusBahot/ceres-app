@@ -604,3 +604,5 @@ tbody td { padding: 12px 14px; color: var(--c-text); vertical-align: middle; }
 .btn-whatsapp:hover:not(:disabled) { background: #1ebd5a; box-shadow: 0 4px 12px rgba(37,211,102,0.35); }
 .m-tag-wa { background: #25D366; color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
 .wa-link { color: #1ebd5a; font-weight: 600; }
+.btn-social { background: var(--c-accent); color: #fff; opacity: 0.85; }
+.btn-social:hover:not(:disabled) { opacity: 1; }
