@@ -41,6 +41,7 @@ db.exec(`
     whatsapp_business INTEGER DEFAULT 0,
     instagram     TEXT,
     facebook      TEXT,
+    site          TEXT,
     prio          INTEGER DEFAULT 20
   );
  
@@ -99,8 +100,9 @@ if (countExisting === 0) {
         email:         e.Email         || e['E-mail']       || '',
         whatsapp:          e.whatsapp_number   || '',
         whatsapp_business: e.whatsapp_business ? 1 : 0,
-        instagram:         e.livre_instagram ? ('https://instagram.com/' + e.livre_instagram) : '',
-        facebook:          e.livre_facebook  ? ('https://facebook.com/'  + e.livre_facebook)  : '',
+        instagram:         (e.livre_instagram || e.site_instagram) ? ('https://instagram.com/' + (e.livre_instagram || e.site_instagram)) : '',
+        facebook:          (e.livre_facebook  || e.site_facebook)  ? ('https://facebook.com/'  + (e.livre_facebook  || e.site_facebook))  : '',
+        site:              e.site_url || '',
         prio:          e.prio          || 20,
       };
     }
@@ -109,11 +111,11 @@ if (countExisting === 0) {
       INSERT OR IGNORE INTO companies
         (grupo, segmento, nome_fantasia, razao_social, cnpj,
          municipio, tel1, tel2, tel3, email, whatsapp, whatsapp_business,
-         instagram, facebook, prio)
+         instagram, facebook, site, prio)
       VALUES
         (@grupo, @segmento, @nome_fantasia, @razao_social, @cnpj,
          @municipio, @tel1, @tel2, @tel3, @email, @whatsapp, @whatsapp_business,
-         @instagram, @facebook, @prio)
+         @instagram, @facebook, @site, @prio)
     `);
  
     const run = db.transaction(list => {

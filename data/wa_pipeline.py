@@ -23,9 +23,9 @@ BASE      = "https://api.checknumber.ai"
 TASK_TYPE = "ws_active"   # retorna whatsapp_days + whatsapp_business (conta comercial)
 CAMPOS_TELEFONE = (
     "Tel1", "Tel2", "Tel3",
-    "receita_tel1", "receita_tel2",
     "maps_tel", "aws_tel", "here_tel", "osm_tel",
     "livre_whatsapp_tel", "livre_tel",
+    "site_whatsapp_tel", "site_tel",
 )
 
 
