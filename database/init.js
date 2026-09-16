@@ -76,59 +76,18 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_wallet_company ON wallets(company_id);
 `);
  
+const { importarEmpresas } = require('./importCompanies');
+
 const countExisting = db.prepare('SELECT COUNT(*) as c FROM companies').get().c;
- 
+
 if (countExisting === 0) {
-  if (!fs.existsSync(JSON_PATH)) {
-    console.warn('[init] AVISO: bd_definitivo.json nao encontrado. Banco iniciado vazio.');
+  console.log('[init] Importando empresas...');
+  const resultado = importarEmpresas(db, JSON_PATH);
+  if (resultado.erro) {
+    console.warn('[init] AVISO: ' + resultado.erro);
     console.warn('[init] Adicione o arquivo em data/ e reinicie o servidor.');
   } else {
-    console.log('[init] Importando empresas...');
-    const empresas = JSON.parse(fs.readFileSync(JSON_PATH, 'utf8'));
- 
-    function normaliza(e) {
-      return {
-        grupo:         e.grupo         || e['Grupo']        || 'OUTROS',
-        segmento:      e.Segmento      || e['Segmento']     || '',
-        nome_fantasia: e.Nome_Fantasia || e['Nome Fantasia']|| '',
-        razao_social:  e.Razao_Social  || e['Razão Social'] || '',
-        cnpj:          e.CNPJ          || e['cnpj']         || '',
-        municipio:     e.Municipio     || e['Município']    || '',
-        tel1:          e.Tel1          || e['Telefone 1']   || '',
-        tel2:          e.Tel2          || e['Telefone 2']   || '',
-        tel3:          e.Tel3          || e['Telefone 3']   || '',
-        email:         e.Email         || e['E-mail']       || '',
-        whatsapp:          e.whatsapp_number   || '',
-        whatsapp_business: e.whatsapp_business ? 1 : 0,
-        instagram:         (e.livre_instagram || e.site_instagram) ? ('https://instagram.com/' + (e.livre_instagram || e.site_instagram)) : '',
-        facebook:          (e.livre_facebook  || e.site_facebook)  ? ('https://facebook.com/'  + (e.livre_facebook  || e.site_facebook))  : '',
-        site:              e.site_url || '',
-        prio:          e.prio          || 20,
-      };
-    }
- 
-    const insert = db.prepare(`
-      INSERT OR IGNORE INTO companies
-        (grupo, segmento, nome_fantasia, razao_social, cnpj,
-         municipio, tel1, tel2, tel3, email, whatsapp, whatsapp_business,
-         instagram, facebook, site, prio)
-      VALUES
-        (@grupo, @segmento, @nome_fantasia, @razao_social, @cnpj,
-         @municipio, @tel1, @tel2, @tel3, @email, @whatsapp, @whatsapp_business,
-         @instagram, @facebook, @site, @prio)
-    `);
- 
-    const run = db.transaction(list => {
-      let ok = 0;
-      for (const e of list) {
-        try { insert.run(normaliza(e)); ok++; } catch(_) {}
-      }
-      return ok;
-    });
- 
-    const total = run(empresas);
-    const mun   = db.prepare('SELECT COUNT(DISTINCT municipio) as c FROM companies').get().c;
-    console.log('[init] ' + total + ' empresas | ' + mun + ' municipios.');
+    console.log('[init] ' + resultado.ok + ' empresas | ' + resultado.municipios + ' municipios.');
   }
 } else {
   const mun = db.prepare('SELECT COUNT(DISTINCT municipio) as c FROM companies').get().c;

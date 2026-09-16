@@ -2,11 +2,31 @@ const express  = require('express');
 const Database = require('better-sqlite3');
 const path     = require('path');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
+const { importarEmpresas } = require('../database/importCompanies');
  
 const router = express.Router();
 const db = new Database(path.join(__dirname, '../database/ceres.db'));
 db.pragma('foreign_keys = ON');
+const JSON_PATH = path.join(__dirname, '../data/bd_definitivo.json');
  
+// ── REIMPORTAR EMPRESAS (admin) — atualiza/adiciona/remove a partir do
+//    data/bd_definitivo.json atual, preservando carteiras/relatorios das
+//    empresas que continuam existindo (mesmo CNPJ mantem o mesmo id) ──────────
+router.post('/admin/reimport', authMiddleware, adminOnly, (req, res) => {
+  const resultado = importarEmpresas(db, JSON_PATH);
+  if (resultado.erro) {
+    return res.status(400).json({ error: resultado.erro });
+  }
+  res.json({
+    message: 'Reimportação concluída.',
+    atualizadas_ou_novas: resultado.ok,
+    removidas: resultado.removidos,
+    ignoradas: resultado.ignorados,
+    total_no_arquivo: resultado.total,
+    municipios: resultado.municipios,
+  });
+});
+
 // ── ATENÇÃO: /stats/summary DEVE vir antes de /:id ────────────────────────────
 router.get('/stats/summary', authMiddleware, (req, res) => {
   const total    = db.prepare('SELECT COUNT(*) as c FROM companies').get().c;
