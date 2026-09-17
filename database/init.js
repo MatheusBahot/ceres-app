@@ -41,7 +41,6 @@ db.exec(`
     whatsapp_business INTEGER DEFAULT 0,
     instagram     TEXT,
     facebook      TEXT,
-    site          TEXT,
     prio          INTEGER DEFAULT 20
   );
  

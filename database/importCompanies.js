@@ -16,7 +16,6 @@ function normaliza(e) {
     whatsapp_business: e.whatsapp_business ? 1 : 0,
     instagram:         (e.livre_instagram || e.site_instagram) ? ('https://instagram.com/' + (e.livre_instagram || e.site_instagram)) : '',
     facebook:          (e.livre_facebook  || e.site_facebook)  ? ('https://facebook.com/'  + (e.livre_facebook  || e.site_facebook))  : '',
-    site:              e.site_url || '',
     prio:          e.prio          || 20,
   };
 }
@@ -37,18 +36,18 @@ function importarEmpresas(db, jsonPath) {
     INSERT INTO companies
       (grupo, segmento, nome_fantasia, razao_social, cnpj,
        municipio, tel1, tel2, tel3, email, whatsapp, whatsapp_business,
-       instagram, facebook, site, prio)
+       instagram, facebook, prio)
     VALUES
       (@grupo, @segmento, @nome_fantasia, @razao_social, @cnpj,
        @municipio, @tel1, @tel2, @tel3, @email, @whatsapp, @whatsapp_business,
-       @instagram, @facebook, @site, @prio)
+       @instagram, @facebook, @prio)
     ON CONFLICT(cnpj) DO UPDATE SET
       grupo=excluded.grupo, segmento=excluded.segmento,
       nome_fantasia=excluded.nome_fantasia, razao_social=excluded.razao_social,
       municipio=excluded.municipio, tel1=excluded.tel1, tel2=excluded.tel2,
       tel3=excluded.tel3, email=excluded.email, whatsapp=excluded.whatsapp,
       whatsapp_business=excluded.whatsapp_business, instagram=excluded.instagram,
-      facebook=excluded.facebook, site=excluded.site, prio=excluded.prio
+      facebook=excluded.facebook, prio=excluded.prio
   `);
 
   const selecionarTodos = db.prepare('SELECT id, cnpj FROM companies');

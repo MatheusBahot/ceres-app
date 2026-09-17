@@ -4,17 +4,20 @@ que faz busca no DuckDuckGo/Google/Bing com fallback automatico, sem
 precisar de chave de API), tentando extrair telefone, link de WhatsApp e
 redes sociais que a propria empresa publicou na web.
 
-Corrigido: a versao anterior batia direto em html.duckduckgo.com e tomava
-bloqueio (HTTP 202) porque esse endpoint exige um token por consulta que
-so bibliotecas prontas tratam direito. Agora usa 'ddgs' (pip install ddgs),
-que faz esse trabalho e ainda tenta motores alternativos se um falhar.
+CORRIGIDO (2a vez): antes, todos os resultados da busca eram juntados
+num texto so antes de extrair dados - isso permitia que um Instagram/
+telefone de um resultado #3 (de outra empresa, outra cidade) fosse
+aceito so porque o nome da empresa aparecia em outro resultado #1. Agora
+cada resultado e analisado INDIVIDUALMENTE, e so aceito se ESSE MESMO
+resultado tiver o nome da empresa E a localizacao (municipio ou "Bahia")
+juntos. Isso elimina contaminacao de empresas com nome parecido em outro
+estado/cidade.
 
 SEJA HONESTO CONSIGO MESMO SOBRE OS LIMITES DISSO: mesmo corrigido, isso e
-busca de texto livre, nao uma API estruturada. Ainda pode sofrer bloqueio
-temporario em uso pesado - por isso o ritmo aqui e deliberadamente lento.
-
-NAO faz scraping de Facebook/Instagram diretamente - so extrai o LINK do
-perfil quando ele aparece nos resultados de busca.
+busca de texto livre, nao uma API estruturada. NAO visita a pagina do
+Instagram/Facebook em si (isso exigiria contornar bloqueio anti-robo e
+viola os termos deles) - so aceita o link quando ele aparece, junto com
+nome e local corretos, no proprio resultado da busca.
 
 Le/escreve em data/bd_enriquecido.json (arquivo compartilhado).
 
@@ -36,39 +39,34 @@ except ImportError:
     sys.exit("Falta instalar a biblioteca: pip3 install ddgs --break-system-packages")
 
 CHECKPOINT_EVERY = 20
-DELAY_BASE = 2.5   # ritmo deliberadamente lento pra nao tomar rate-limit
+DELAY_BASE = 2.5
 
 RE_WAME  = re.compile(r"(?:wa\.me/|api\.whatsapp\.com/send\?phone=)(\d{10,13})")
 RE_TEL   = re.compile(r"(?:\+?55\s?)?\(?\d{2}\)?[\s.-]?9?\d{4}[\s.-]?\d{4}")
 RE_INSTA = re.compile(r"instagram\.com/([A-Za-z0-9_.]{2,30})")
 RE_FB    = re.compile(r"facebook\.com/([A-Za-z0-9_.]{2,50})")
 
-DDD_BAHIA = {"71", "73", "74", "75", "77"}  # unicos DDDs que existem na Bahia
+DDD_BAHIA = {"71", "73", "74", "75", "77"}
 
 
-def ddd_valido_bahia(numero_e164_ou_digitos):
-    """So aceita numero se o DDD for de fato da Bahia - descarta ruido de
-    outras empresas que aparecem na mesma pagina de resultado."""
-    d = re.sub(r"\D", "", numero_e164_ou_digitos or "")
+def ddd_valido_bahia(numero):
+    d = re.sub(r"\D", "", numero or "")
     if d.startswith("55"):
         d = d[2:]
     return len(d) >= 10 and d[:2] in DDD_BAHIA
 
 
-def filtra_bahia(lista_numeros):
-    return [n for n in lista_numeros if ddd_valido_bahia(n)]
+def filtra_bahia(lista):
+    return [n for n in lista if ddd_valido_bahia(n)]
 
 
 def buscar_livre(query, tentativas=3):
+    """Retorna a LISTA de resultados (nao concatenados), pra permitir
+    filtrar empresa+local por resultado individual."""
     for tentativa in range(tentativas):
         try:
             with DDGS(timeout=15) as ddgs:
-                resultados = ddgs.text(query, max_results=5, region="br-pt")
-            texto = " ".join(
-                f"{r.get('title','')} {r.get('body','')} {r.get('href','')}"
-                for r in resultados
-            )
-            return texto
+                return ddgs.text(query, max_results=6, region="br-pt")
         except RatelimitException:
             espera = 8 + tentativa * 8
             print(f"  [RATE LIMIT] esperando {espera}s antes de tentar de novo...")
@@ -82,19 +80,33 @@ def buscar_livre(query, tentativas=3):
     return None
 
 
-def extrair_sinais(texto, nome_empresa):
+def extrair_sinais(resultados, nome_empresa, municipio):
     nome_norm = normaliza_nome(nome_empresa)
-    aparece_nome = bool(nome_norm) and nome_norm in normaliza_nome(texto)
+    municipio_norm = normaliza_nome(municipio)
 
-    wa_links = filtra_bahia(RE_WAME.findall(texto))
-    tels     = filtra_bahia(RE_TEL.findall(texto))
-    instas   = RE_INSTA.findall(texto)
-    fbs      = RE_FB.findall(texto)
+    wa_links, tels, instas, fbs = [], [], [], []
+    algum_resultado_valido = False
+
+    for r in resultados:
+        texto_item = f"{r.get('title','')} {r.get('body','')} {r.get('href','')}"
+        texto_norm = normaliza_nome(texto_item)
+
+        tem_nome  = bool(nome_norm) and nome_norm in texto_norm
+        tem_local = (bool(municipio_norm) and municipio_norm in texto_norm) or "BAHIA" in texto_norm
+
+        if not (tem_nome and tem_local):
+            continue
+
+        algum_resultado_valido = True
+        wa_links += RE_WAME.findall(texto_item)
+        tels     += RE_TEL.findall(texto_item)
+        instas   += RE_INSTA.findall(texto_item)
+        fbs      += RE_FB.findall(texto_item)
 
     return {
-        "aparece_nome": aparece_nome,
-        "wa_links": wa_links,
-        "tels": tels,
+        "aparece_nome_e_local": algum_resultado_valido,
+        "wa_links": filtra_bahia(wa_links),
+        "tels": filtra_bahia(tels),
         "instagram": instas[0] if instas else "",
         "facebook": fbs[0] if fbs else "",
     }
@@ -126,11 +138,12 @@ def main():
         if e.get("_livre_checado"):
             continue
 
-        nome  = e.get("Nome_Fantasia") or e.get("Razao_Social") or ""
-        query = f'{nome} {e.get("Municipio","")} Bahia whatsapp telefone contato'
-        texto = buscar_livre(query)
+        nome = e.get("Nome_Fantasia") or e.get("Razao_Social") or ""
+        municipio = e.get("Municipio", "")
+        query = f'{nome} {municipio} Bahia whatsapp telefone contato'
+        resultados = buscar_livre(query)
 
-        if texto is None:
+        if resultados is None:
             falhas_seguidas += 1
             if falhas_seguidas >= 5:
                 print()
@@ -141,9 +154,9 @@ def main():
             continue
         falhas_seguidas = 0
 
-        sinais = extrair_sinais(texto, nome)
+        sinais = extrair_sinais(resultados, nome, municipio)
 
-        if sinais["aparece_nome"]:
+        if sinais["aparece_nome_e_local"]:
             wa_tel = normaliza_e164(sinais["wa_links"][0]) if sinais["wa_links"] else ""
             tel    = normaliza_e164(sinais["tels"][0]) if sinais["tels"] else ""
             e["livre_whatsapp_tel"] = wa_tel or ""

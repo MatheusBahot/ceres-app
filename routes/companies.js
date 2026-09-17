@@ -96,7 +96,7 @@ router.get('/list', authMiddleware, (req, res) => {
   let query = `
     SELECT c.id, c.grupo, c.segmento, c.nome_fantasia, c.razao_social,
            c.cnpj, c.municipio, c.tel1, c.tel2, c.tel3, c.email,
-           c.whatsapp, c.whatsapp_business, c.instagram, c.facebook, c.site,
+           c.whatsapp, c.whatsapp_business, c.instagram, c.facebook,
            CASE WHEN w.id IS NOT NULL THEN 1 ELSE 0 END as in_my_wallet,
            w.status as wallet_status
     FROM companies c
