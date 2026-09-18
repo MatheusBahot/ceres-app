@@ -5,20 +5,17 @@ que faz busca no DuckDuckGo/Google/Bing/Brave etc, com parametro
 nao e raspagem por fora dela), tentando extrair telefone, link de
 WhatsApp e redes sociais que a propria empresa publicou na web.
 
-CORRIGIDO (3a vez):
-1. Agora consulta DOIS motores por empresa (duckduckgo + google, via o
-   parametro backend da propria ddgs) e junta os resultados, aumentando
-   o total de material bruto pra filtrar - mais chance de achar o
-   resultado certo sem afrouxar a exigencia de precisao.
-2. Para TELEFONE, o filtro de local ficou mais inteligente: aceita se o
-   nome da empresa aparece no resultado E (a cidade/Bahia e mencionada
-   OU o DDD do numero encontrado ja e um DDD real da Bahia - o proprio
-   DDD e uma prova independente de localizacao, entao nao precisa
-   exigir as duas coisas ao mesmo tempo).
-3. Para INSTAGRAM/FACEBOOK, mantido o exigente (nome + cidade/Bahia no
-   mesmo resultado), porque nao existe um equivalente ao DDD pra
-   confirmar local de forma independente - aqui o volume maior de
-   resultados (item 1) e o que deve ajudar a achar mais casos legitimos.
+CORRIGIDO (4a vez):
+1. Google agora e usado so como REFORCO (se o DuckDuckGo nao achar nada),
+   nao em toda consulta - reduz o volume de chamadas ao motor que bloqueia
+   automacao com mais agressividade.
+2. Se vier "No results found" (ou qualquer erro) em varias empresas
+   seguidas, o script agora PAUSA automaticamente (1min, 2min, 3min, 4min)
+   e tenta se recuperar sozinho, em vez de morrer na hora. So desiste de
+   vez depois de 4 pausas sem sucesso.
+3. Telefone aceita local-no-texto OU DDD ja ser da Bahia (prova
+   independente). Instagram/Facebook continuam exigindo nome + local
+   juntos no mesmo resultado.
 
 SEJA HONESTO CONSIGO MESMO SOBRE OS LIMITES DISSO: mesmo corrigido, isso e
 busca de texto livre, nao uma API estruturada. NAO visita a pagina do
@@ -63,11 +60,16 @@ def ddd_da_bahia(numero):
 
 
 def buscar_livre(query, tentativas=2):
-    """Consulta multiplos backends e junta os resultados (deduplicados por URL)."""
+    """Tenta DuckDuckGo primeiro. So chama o Google como REFORCO se o
+    DuckDuckGo nao trouxe nada - reduz bastante o volume de chamadas ao
+    Google, que bloqueia automacao de forma bem mais agressiva."""
     todos, vistos = [], set()
     algum_sucesso = False
 
-    for backend in BACKENDS:
+    for indice_backend, backend in enumerate(BACKENDS):
+        if todos and indice_backend > 0:
+            break
+
         for tentativa in range(tentativas):
             try:
                 with DDGS(timeout=15) as ddgs:
@@ -85,8 +87,11 @@ def buscar_livre(query, tentativas=2):
                 time.sleep(2)
                 break
             except DDGSException as ex:
-                print(f"  [ERRO ddgs/{backend}] {ex}")
-                break
+                print(f"  [AVISO ddgs/{backend}] {ex}")
+                time.sleep(3 + tentativa * 3)
+
+        if indice_backend < len(BACKENDS) - 1:
+            time.sleep(1.5)
 
     return todos if algum_sucesso else None
 
@@ -152,6 +157,8 @@ def main():
     print(f"Consultando {len(BACKENDS)} motores por empresa ({', '.join(BACKENDS)}) - mais lento, mais cobertura.")
 
     falhas_seguidas = 0
+    cooldowns_usados = 0
+    MAX_COOLDOWNS = 4
     achou_algo_total = 0
 
     for i, e in enumerate(empresas, 1):
@@ -166,13 +173,23 @@ def main():
         if resultados is None:
             falhas_seguidas += 1
             if falhas_seguidas >= 5:
+                cooldowns_usados += 1
+                if cooldowns_usados > MAX_COOLDOWNS:
+                    print()
+                    print(f"PARANDO DE VERDADE: mesmo depois de {MAX_COOLDOWNS} pausas de recuperacao,")
+                    print("continua falhando. Provavelmente bloqueio mais duradouro desta vez -")
+                    print("espere pelo menos 1-2 horas (ou tente de uma rede diferente) antes de rodar de novo.")
+                    salvar(empresas)
+                    sys.exit(1)
+                espera = 60 * cooldowns_usados
                 print()
-                print("PARANDO: 5 falhas seguidas. Espere alguns minutos e rode de novo -")
-                print("o checkpoint garante que retoma sem perder o que ja foi feito.")
+                print(f"5 falhas seguidas - pausa de recuperacao #{cooldowns_usados} ({espera}s)...")
                 salvar(empresas)
-                sys.exit(1)
+                time.sleep(espera)
+                falhas_seguidas = 0
             continue
         falhas_seguidas = 0
+        cooldowns_usados = 0
 
         sinais = extrair_sinais(resultados, nome, municipio)
 
