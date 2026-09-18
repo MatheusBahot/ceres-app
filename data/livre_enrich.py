@@ -1,23 +1,28 @@
 """
 ULTIMA CAMADA - busca de texto livre via 'ddgs' (biblioteca open source
-que faz busca no DuckDuckGo/Google/Bing com fallback automatico, sem
-precisar de chave de API), tentando extrair telefone, link de WhatsApp e
-redes sociais que a propria empresa publicou na web.
+que faz busca no DuckDuckGo/Google/Bing/Brave etc, com parametro
+'backend' documentado oficialmente pelos proprios autores da biblioteca -
+nao e raspagem por fora dela), tentando extrair telefone, link de
+WhatsApp e redes sociais que a propria empresa publicou na web.
 
-CORRIGIDO (2a vez): antes, todos os resultados da busca eram juntados
-num texto so antes de extrair dados - isso permitia que um Instagram/
-telefone de um resultado #3 (de outra empresa, outra cidade) fosse
-aceito so porque o nome da empresa aparecia em outro resultado #1. Agora
-cada resultado e analisado INDIVIDUALMENTE, e so aceito se ESSE MESMO
-resultado tiver o nome da empresa E a localizacao (municipio ou "Bahia")
-juntos. Isso elimina contaminacao de empresas com nome parecido em outro
-estado/cidade.
+CORRIGIDO (3a vez):
+1. Agora consulta DOIS motores por empresa (duckduckgo + google, via o
+   parametro backend da propria ddgs) e junta os resultados, aumentando
+   o total de material bruto pra filtrar - mais chance de achar o
+   resultado certo sem afrouxar a exigencia de precisao.
+2. Para TELEFONE, o filtro de local ficou mais inteligente: aceita se o
+   nome da empresa aparece no resultado E (a cidade/Bahia e mencionada
+   OU o DDD do numero encontrado ja e um DDD real da Bahia - o proprio
+   DDD e uma prova independente de localizacao, entao nao precisa
+   exigir as duas coisas ao mesmo tempo).
+3. Para INSTAGRAM/FACEBOOK, mantido o exigente (nome + cidade/Bahia no
+   mesmo resultado), porque nao existe um equivalente ao DDD pra
+   confirmar local de forma independente - aqui o volume maior de
+   resultados (item 1) e o que deve ajudar a achar mais casos legitimos.
 
 SEJA HONESTO CONSIGO MESMO SOBRE OS LIMITES DISSO: mesmo corrigido, isso e
 busca de texto livre, nao uma API estruturada. NAO visita a pagina do
-Instagram/Facebook em si (isso exigiria contornar bloqueio anti-robo e
-viola os termos deles) - so aceita o link quando ele aparece, junto com
-nome e local corretos, no proprio resultado da busca.
+Instagram/Facebook em si.
 
 Le/escreve em data/bd_enriquecido.json (arquivo compartilhado).
 
@@ -38,8 +43,9 @@ try:
 except ImportError:
     sys.exit("Falta instalar a biblioteca: pip3 install ddgs --break-system-packages")
 
-CHECKPOINT_EVERY = 20
-DELAY_BASE = 2.5
+CHECKPOINT_EVERY = 15
+DELAY_BASE = 2.0
+BACKENDS = ("duckduckgo", "google")  # pode adicionar "brave" se quiser ainda mais cobertura
 
 RE_WAME  = re.compile(r"(?:wa\.me/|api\.whatsapp\.com/send\?phone=)(\d{10,13})")
 RE_TEL   = re.compile(r"(?:\+?55\s?)?\(?\d{2}\)?[\s.-]?9?\d{4}[\s.-]?\d{4}")
@@ -49,35 +55,40 @@ RE_FB    = re.compile(r"facebook\.com/([A-Za-z0-9_.]{2,50})")
 DDD_BAHIA = {"71", "73", "74", "75", "77"}
 
 
-def ddd_valido_bahia(numero):
+def ddd_da_bahia(numero):
     d = re.sub(r"\D", "", numero or "")
     if d.startswith("55"):
         d = d[2:]
     return len(d) >= 10 and d[:2] in DDD_BAHIA
 
 
-def filtra_bahia(lista):
-    return [n for n in lista if ddd_valido_bahia(n)]
+def buscar_livre(query, tentativas=2):
+    """Consulta multiplos backends e junta os resultados (deduplicados por URL)."""
+    todos, vistos = [], set()
+    algum_sucesso = False
 
+    for backend in BACKENDS:
+        for tentativa in range(tentativas):
+            try:
+                with DDGS(timeout=15) as ddgs:
+                    resultados = ddgs.text(query, max_results=5, region="br-pt", backend=backend)
+                for item in resultados:
+                    href = item.get("href", "")
+                    if href and href not in vistos:
+                        vistos.add(href)
+                        todos.append(item)
+                algum_sucesso = True
+                break
+            except RatelimitException:
+                time.sleep(6 + tentativa * 4)
+            except TimeoutException:
+                time.sleep(2)
+                break
+            except DDGSException as ex:
+                print(f"  [ERRO ddgs/{backend}] {ex}")
+                break
 
-def buscar_livre(query, tentativas=3):
-    """Retorna a LISTA de resultados (nao concatenados), pra permitir
-    filtrar empresa+local por resultado individual."""
-    for tentativa in range(tentativas):
-        try:
-            with DDGS(timeout=15) as ddgs:
-                return ddgs.text(query, max_results=6, region="br-pt")
-        except RatelimitException:
-            espera = 8 + tentativa * 8
-            print(f"  [RATE LIMIT] esperando {espera}s antes de tentar de novo...")
-            time.sleep(espera)
-        except TimeoutException:
-            print(f"  [TIMEOUT] tentativa {tentativa+1}")
-            time.sleep(3 + tentativa)
-        except DDGSException as ex:
-            print(f"  [ERRO ddgs] {ex}")
-            time.sleep(3 + tentativa)
-    return None
+    return todos if algum_sucesso else None
 
 
 def extrair_sinais(resultados, nome_empresa, municipio):
@@ -94,19 +105,27 @@ def extrair_sinais(resultados, nome_empresa, municipio):
         tem_nome  = bool(nome_norm) and nome_norm in texto_norm
         tem_local = (bool(municipio_norm) and municipio_norm in texto_norm) or "BAHIA" in texto_norm
 
-        if not (tem_nome and tem_local):
+        if not tem_nome:
             continue
 
-        algum_resultado_valido = True
-        wa_links += RE_WAME.findall(texto_item)
-        tels     += RE_TEL.findall(texto_item)
-        instas   += RE_INSTA.findall(texto_item)
-        fbs      += RE_FB.findall(texto_item)
+        for w in RE_WAME.findall(texto_item):
+            if tem_local or ddd_da_bahia(w):
+                wa_links.append(w)
+        for t in RE_TEL.findall(texto_item):
+            if tem_local or ddd_da_bahia(t):
+                tels.append(t)
+
+        if tem_local:
+            algum_resultado_valido = True
+            instas += RE_INSTA.findall(texto_item)
+            fbs    += RE_FB.findall(texto_item)
+
+    achou_algo = bool(wa_links or tels or algum_resultado_valido)
 
     return {
-        "aparece_nome_e_local": algum_resultado_valido,
-        "wa_links": filtra_bahia(wa_links),
-        "tels": filtra_bahia(tels),
+        "achou_algo": achou_algo,
+        "wa_links": wa_links,
+        "tels": tels,
         "instagram": instas[0] if instas else "",
         "facebook": fbs[0] if fbs else "",
     }
@@ -130,9 +149,10 @@ def main():
     ja_feitas = sum(1 for e in empresas if e.get("_livre_checado"))
     if ja_feitas:
         print(f"Retomando: {ja_feitas} ja tinham sido consultadas antes.")
+    print(f"Consultando {len(BACKENDS)} motores por empresa ({', '.join(BACKENDS)}) - mais lento, mais cobertura.")
 
     falhas_seguidas = 0
-    achou_algo = 0
+    achou_algo_total = 0
 
     for i, e in enumerate(empresas, 1):
         if e.get("_livre_checado"):
@@ -156,7 +176,7 @@ def main():
 
         sinais = extrair_sinais(resultados, nome, municipio)
 
-        if sinais["aparece_nome_e_local"]:
+        if sinais["achou_algo"]:
             wa_tel = normaliza_e164(sinais["wa_links"][0]) if sinais["wa_links"] else ""
             tel    = normaliza_e164(sinais["tels"][0]) if sinais["tels"] else ""
             e["livre_whatsapp_tel"] = wa_tel or ""
@@ -165,7 +185,7 @@ def main():
             e["livre_facebook"]     = sinais["facebook"]
             e["livre_confianca"]    = 1.0
             if wa_tel or tel or sinais["instagram"] or sinais["facebook"]:
-                achou_algo += 1
+                achou_algo_total += 1
         else:
             e["livre_whatsapp_tel"] = e["livre_tel"] = ""
             e["livre_instagram"] = e["livre_facebook"] = ""
@@ -176,7 +196,7 @@ def main():
 
         if i % CHECKPOINT_EVERY == 0 or i == total:
             salvar(empresas)
-            print(f"[{i}/{total}] processadas — {achou_algo} com algum sinal ate agora — checkpoint salvo.")
+            print(f"[{i}/{total}] processadas — {achou_algo_total} com algum sinal ate agora — checkpoint salvo.")
 
     salvar(empresas)
 
